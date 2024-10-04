@@ -16,7 +16,7 @@
             margin: 0;
             padding: 0;
             font-family: Arial, Helvetica, sans-serif;
-            font-size: 26px;
+            font-size: 18px;
         }
 
         #table2 {
@@ -26,15 +26,15 @@
 
         #table2 td,
         #table2 th {
-            border: 2px solid black;
-            padding: 12px;
+            border: 2px solid rgb(151, 151, 151);
+            padding: 10px;
             text-align: left;
         }
 
         #table3 td,
         #table3 th {
             /* border: 1px solid black; */
-            padding: 12px;
+            padding: 10px;
             text-align: left;
         }
     </style>
@@ -46,10 +46,13 @@
             <tbody>
                 <tr>
                     <td>
-                        <img src="logo.png" style="width: 200px" alt="">
+                        <img src="logo.png" style="width: 180px" alt="">
                     </td>
                     <td>
-                        <h1 style="text-align: right">{{ $certificate->certificateType->name }}</h1>
+                        <h1 style="text-align: right; font-size: 36px">
+                            {{ $customFields['value_1'] }}
+                            {{ $certificate->certificateType->name }}
+                        </h1>
                     </td>
 
                 </tr>
@@ -59,9 +62,9 @@
         <table id="table2">
             <tbody>
                 <tr>
-                    <th>Name</th>
-                    <td>{{ $certificate->certifier_name }}</td>
-                    <td rowspan="5" colspan="2">
+                    <th style="width: 300px">Name</th>
+                    <td style="width: 400px">{{ $certificate->certifier_name }}</td>
+                    <td style="width: 200px" rowspan="5" colspan="2">
                         <img src="https://plus.unsplash.com/premium_photo-1683121366070-5ceb7e007a97?q=80&w=2940&auto=format&fit=crop&ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D"
                             style="object-fit: s;" height="200px" width="100%" alt="">
                     </td>
@@ -124,10 +127,14 @@
                                 <th>Certification</th>
                                 <td>{{ $certificate->certificateType->name }}</td>
                             </tr>
+                            {{-- <tr>
+                                <th>{{ $customFields['label_1'] }}</th>
+                                <td>{{ $customFields['value_1'] }}</td>
+                            </tr> --}}
                             @foreach ($certificate->customFields as $item)
                                 <tr>
-                                    <th>{{ $item->key }}</th>
-                                    <td>{{ $item->value }}</td>
+                                    <th class="text-left">{{ $item->key }}</th>
+                                    <td class="text-left">{{ $item->value }}</td>
                                 </tr>
                             @endforeach
                         </tbody>

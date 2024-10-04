@@ -32,12 +32,9 @@ export default function EmployeeList({
                         <div className="flex justify-between">
                             <div>
                                 <h1 className="text-2xl font-bold mb-5">
-                                    Certificates
+                                    Pending Approval
                                 </h1>
                             </div>
-                            <Link href={route("certificates.create")}>
-                                <Button>AddNew</Button>
-                            </Link>
                         </div>
                         <div className="rounded-md border">
                             <Table>

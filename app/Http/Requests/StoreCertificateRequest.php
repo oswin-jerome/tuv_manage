@@ -24,8 +24,10 @@ class StoreCertificateRequest extends FormRequest
     {
         return [
             "certifier_name" => "required|string",
+            "certificate_name" => "required|string",
             "iqama" => "required|string",
             "company" => "required|string",
+            "project" => "required|string",
             "ref_no" => "required|string|unique:certificates,ref_no",
             "witness" => "required|string",
             "issuedAt" => "required|date",

@@ -8,7 +8,11 @@ use App\Models\Certificate;
 use App\Models\CertificateCustomField;
 use App\Models\CertificateType;
 use Barryvdh\DomPDF\Facade\Pdf;
+use Barryvdh\Snappy\Facades\SnappyPdf as FacadesSnappyPdf;
+use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Auth;
 use Inertia\Inertia;
+use Knp\Snappy\Pdf as SnappyPdf;
 use Spatie\LaravelPdf\Facades\Pdf as FacadesPdf;
 
 class CertificateController extends Controller
@@ -18,7 +22,19 @@ class CertificateController extends Controller
      */
     public function index()
     {
-        $certificates = Certificate::with("certificateType")->get();
+        /** @var User */
+        $user = Auth::user();
+
+        $isAdmin = $user->hasRole("admin");
+        $certificates = Certificate::with("certificateType");
+
+        if (!$isAdmin) {
+            $certificates = $certificates->where("creator_id", "=", $user->id);
+        }
+
+
+        $certificates = $certificates->orderBy("created_at", "DESC");
+        $certificates = $certificates->get();
 
         // return $certificates;
 
@@ -42,8 +58,10 @@ class CertificateController extends Controller
      */
     public function store(StoreCertificateRequest $request)
     {
+        /** @var User */
+        $user = Auth::user();
 
-        $certificate =  Certificate::create($request->except("customFields"));
+        $certificate =  $user->myCertificates()->create($request->except("customFields"));
 
         if ($request->has("customFields")) {
 
@@ -65,7 +83,7 @@ class CertificateController extends Controller
     public function show(Certificate $certificate)
     {
         return Inertia::render("Certificates/Show", [
-            "certificate" => $certificate
+            "certificate" =>  $certificate->where("id", $certificate->id)->with(["certificateType", "customFields"])->first()
         ]);
     }
 
@@ -90,27 +108,88 @@ class CertificateController extends Controller
      */
     public function destroy(Certificate $certificate)
     {
-        //
+        $certificate->customFields()->delete();
+
+        $certificate->delete();
+
+        return back();
     }
 
     public function pdf(Certificate $certificate)
     {
+        /**@var User */
+        $user = Auth::user();
+        $isAdmin = $user->hasRole("admin");
 
-        if ($certificate->certificateType->name == "Work At Height") {
-            $pdf = FacadesPdf::view('pdf.wh', [
-                "certificate" => $certificate
-            ]);
-            return $pdf;
+        if (!$isAdmin) {
+            return response('Unauthorized.', 401);
+        }
+        $data = [];
+        foreach ($certificate->customFields as $key => $value) {
+            $data[$value->key] = $value->value;
         }
 
-        $pdf = FacadesPdf::view('pdf.tw', [
-            "certificate" => $certificate
-        ])->landscape();
-        return $pdf;
 
-        // $pdf = Pdf::loadView('pdf.test', [
+        if ($certificate->certificateType->name == "Work At Height") {
+            $pdf = Pdf::loadView('pdf.wh', [
+                "certificate" => $certificate,
+                "customFields" => $data
+            ]);
+            // ->setOption('no-stop-slow-scripts', true)
+            //     ->setOption('enable-local-file-access', true)
+            //     ->setOption('enable-local-file-access', true)
+            //     ->setOption('disable-smart-shrinking', true);
+            return $pdf->stream();
+        }
+
+        // $pdf = FacadesPdf::view('pdf.tw', [
         //     "certificate" => $certificate
-        // ])->setPaper("A4", "landscape");
-        // return $pdf->stream();
+        // ])->landscape();
+        // return $pdf;
+
+        $pdf = Pdf::loadView('pdf.operator', [
+            "certificate" => $certificate,
+            "customFields" => $data
+
+        ])->setPaper([0, 0, 830, 521], "portrait");
+        return $pdf->stream();
+    }
+
+    public function pending()
+    {
+
+        /**@var User */
+        $user = Auth::user();
+        $isAdmin = $user->hasRole("admin");
+
+        if (!$isAdmin) {
+            return response('Unauthorized.', 401);
+        }
+
+        $certificates = Certificate::with("certificateType")->where("approval_status", "=", "pending")->get();
+
+        return Inertia::render("Certificates/Pending", [
+            "certificates" => $certificates
+        ]);
+    }
+
+    public function takeAction(Certificate $certificate, Request $request)
+    {
+        /**@var User */
+        $user = Auth::user();
+        $isAdmin = $user->hasRole("admin");
+
+        if (!$isAdmin) {
+            return response('Unauthorized.', 401);
+        }
+        $request->validate([
+            "status" => "required"
+        ]);
+
+        $certificate->approval_status = $request->get("status");
+
+        $certificate->save();
+
+        return back();
     }
 }

@@ -14,6 +14,7 @@ export type PageProps<
 > = T & {
     auth: {
         user: User;
+        roles: string[];
     };
 };
 
@@ -47,4 +48,15 @@ export interface Certificate {
     updated_at: Date;
     certificate_type: CertificateType;
     isExpired: boolean;
+    custom_fields: CustomField[];
+    approval_status: "pending" | "approved" | "rejected";
+}
+
+export interface CustomField {
+    id: number;
+    key: string;
+    value: string;
+    certificate_id: number;
+    created_at: Date;
+    updated_at: Date;
 }

@@ -15,7 +15,7 @@ class CertificateTypeSeeder extends Seeder
     {
         $certType =  CertificateType::create([
             "name" => "Operator",
-            "customFields" => json_encode(["Equipment Authorized To Operate"])
+            "customFields" => json_encode(["Authorized to operate: ", "custom_text"])
         ]);
         $certType2 =  CertificateType::create([
             "name" => "Work At Height",

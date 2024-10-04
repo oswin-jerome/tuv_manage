@@ -34,8 +34,10 @@ const CreateCertificateType = ({
         transform,
     } = useForm({
         certifier_name: "",
+        certificate_name: "",
         iqama: "",
         company: "",
+        project: "",
         ref_no: "",
         witness: "",
         issuedAt: "",
@@ -116,6 +118,16 @@ const CreateCertificateType = ({
                             <InputError message={errors.certifier_name} />
                         </div>
                         <div>
+                            <Label>Certificate Name</Label>
+                            <Input
+                                value={data.certificate_name}
+                                onChange={(e) =>
+                                    setData("certificate_name", e.target.value)
+                                }
+                            />
+                            <InputError message={errors.certificate_name} />
+                        </div>
+                        <div>
                             <Label>Iqama</Label>
                             <Input
                                 value={data.iqama}
@@ -134,6 +146,16 @@ const CreateCertificateType = ({
                                 }
                             />
                             <InputError message={errors.company} />
+                        </div>
+                        <div>
+                            <Label>Project</Label>
+                            <Input
+                                value={data.project}
+                                onChange={(e) =>
+                                    setData("project", e.target.value)
+                                }
+                            />
+                            <InputError message={errors.project} />
                         </div>
                         <div>
                             <Label>Ref #</Label>

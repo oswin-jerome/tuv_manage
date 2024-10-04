@@ -6,6 +6,7 @@ import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import {
     Bell,
+    CheckCircleIcon,
     FileIcon,
     LayoutDashboard,
     ListIcon,
@@ -20,22 +21,40 @@ export default function Authenticated({
     children,
 }: PropsWithChildren<{ header?: ReactNode }>) {
     const pathname = usePage().url;
-
-    const user = usePage().props.auth.user;
+    const auth = usePage().props.auth;
+    const user = auth.user;
     const [sidebarOpen, setSidebarOpen] = useState(false);
 
     const sidebarItems = [
-        { icon: LayoutDashboard, label: "Dashboard", href: "/dashboard" },
-        { icon: UserIcon, label: "Users", href: route("users.index") },
+        {
+            icon: LayoutDashboard,
+            label: "Dashboard",
+            href: "/dashboard",
+            show: true,
+        },
+        {
+            icon: UserIcon,
+            label: "Users",
+            href: route("users.index"),
+            show: auth.roles.includes("admin"),
+        },
         {
             icon: FileIcon,
             label: "Certificates",
             href: route("certificates.index"),
+            show: true,
+        },
+        {
+            icon: CheckCircleIcon,
+            label: "Pending Approvals",
+            href: route("certificates.pending"),
+            show: auth.roles.includes("admin"),
         },
         {
             icon: ListIcon,
             label: "Certificate Types",
             href: route("certificate-types.index"),
+            show: auth.roles.includes("admin"),
         },
     ];
 
@@ -50,7 +69,9 @@ export default function Authenticated({
       `}
             >
                 <div className="flex items-center justify-between h-16 px-6 bg-primary text-white">
-                    <span className="text-2xl font-semibold">FormCraft</span>
+                    <span className="text-2xl font-semibold">
+                        FormCraft {JSON.stringify(auth.roles)}
+                    </span>
                     <Button
                         variant="ghost"
                         size="icon"
@@ -61,19 +82,21 @@ export default function Authenticated({
                     </Button>
                 </div>
                 <nav className="mt-6">
-                    {sidebarItems.map((item, index) => (
-                        <Link
-                            key={index}
-                            href={item.href}
-                            className={`
+                    {sidebarItems
+                        .filter((c) => c.show)
+                        .map((item, index) => (
+                            <Link
+                                key={index}
+                                href={item.href}
+                                className={`
                 flex items-center px-6 py-3 text-gray-700 hover:bg-gray-100
                 ${pathname === item.href ? "bg-gray-100" : ""}
               `}
-                        >
-                            <item.icon className="h-5 w-5 mr-3" />
-                            {item.label}
-                        </Link>
-                    ))}
+                            >
+                                <item.icon className="h-5 w-5 mr-3" />
+                                {item.label}
+                            </Link>
+                        ))}
                 </nav>
             </div>
 

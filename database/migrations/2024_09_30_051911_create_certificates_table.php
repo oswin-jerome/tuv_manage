@@ -13,9 +13,11 @@ return new class extends Migration
     {
         Schema::create('certificates', function (Blueprint $table) {
             $table->id();
+            $table->string("certificate_name");
             $table->string("certifier_name");
             $table->string("iqama");
             $table->string("company"); // TODO: Make is a separate table
+            $table->string("project")->nullable(); // TODO: Make is a separate table
             $table->string("ref_no")->unique();
             $table->string("witness");
             $table->date("issuedAt")->default(now());
@@ -23,6 +25,11 @@ return new class extends Migration
 
             $table->unsignedBigInteger("certificate_type_id");
             $table->foreign("certificate_type_id")->references("id")->on("certificate_types");
+
+            $table->unsignedBigInteger("creator_id");
+            $table->foreign("creator_id")->references("id")->on("users");
+
+            $table->enum("approval_status", ["pending", "approved", "rejected"])->default("pending");
 
             $table->timestamps();
         });

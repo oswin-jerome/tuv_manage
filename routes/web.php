@@ -24,8 +24,10 @@ Route::get('/dashboard', function () {
 Route::middleware(['auth', 'verified'])->group(function () {
     Route::resource("users", UserController::class);
     Route::resource("certificate-types", CertificateTypeController::class);
+    Route::get("certificates/pending", [CertificateController::class, "pending"])->name("certificates.pending");
     Route::resource("certificates", CertificateController::class);
     Route::get("certificates/{certificate}/pdf", [CertificateController::class, "pdf"])->name("certificates.pdf");
+    Route::post("certificates/{certificate}/takeAction", [CertificateController::class, "takeAction"])->name("certificates.action");
 });
 
 Route::middleware('auth')->group(function () {

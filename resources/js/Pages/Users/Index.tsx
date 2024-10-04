@@ -1,6 +1,5 @@
 import { Button } from "@/components/ui/button";
 import { Card, CardContent } from "@/components/ui/card";
-import { Input } from "@/components/ui/input";
 import {
     Table,
     TableBody,
@@ -12,17 +11,11 @@ import {
 import Authenticated from "@/Layouts/AuthenticatedLayout";
 import { User } from "@/types";
 import { Link } from "@inertiajs/react";
-import { Edit, Eye, Search } from "lucide-react";
+import { Edit, Eye } from "lucide-react";
 import { useState } from "react";
 
 export default function EmployeeList({ users }: { users: User[] }) {
     const [searchTerm, setSearchTerm] = useState("");
-
-    const filteredEmployees = users.filter((employee) =>
-        Object.values(employee).some((value) =>
-            value.toString().toLowerCase().includes(searchTerm.toLowerCase())
-        )
-    );
 
     return (
         <Authenticated>
@@ -34,17 +27,6 @@ export default function EmployeeList({ users }: { users: User[] }) {
                                 <h1 className="text-2xl font-bold mb-5">
                                     User List
                                 </h1>
-                                <div className="flex items-center mb-4">
-                                    <Input
-                                        placeholder="Search employees..."
-                                        value={searchTerm}
-                                        onChange={(e) =>
-                                            setSearchTerm(e.target.value)
-                                        }
-                                        className="max-w-sm"
-                                    />
-                                    <Search className="ml-2 h-4 w-4 text-gray-500" />
-                                </div>
                             </div>
                             <Link href={route("users.create")}>
                                 <Button>AddNew</Button>
