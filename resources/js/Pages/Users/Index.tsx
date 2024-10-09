@@ -62,24 +62,32 @@ export default function EmployeeList({ users }: { users: User[] }) {
                                             </TableCell>
                                             <TableCell>
                                                 <div className="flex space-x-2">
-                                                    <Button
-                                                        variant="outline"
-                                                        size="icon"
+                                                    <Link
+                                                        href={route(
+                                                            "users.show",
+                                                            employee.id
+                                                        )}
                                                     >
-                                                        <Eye className="h-4 w-4" />
-                                                    </Button>
-                                                    <Button
-                                                        variant="outline"
-                                                        size="icon"
+                                                        <Button
+                                                            variant="outline"
+                                                            size="icon"
+                                                        >
+                                                            <Eye className="h-4 w-4" />
+                                                        </Button>
+                                                    </Link>
+                                                    <Link
+                                                        href={route(
+                                                            "users.edit",
+                                                            employee.id
+                                                        )}
                                                     >
-                                                        <Edit className="h-4 w-4" />
-                                                    </Button>
-                                                    {/* <Button
-                                                        variant="outline"
-                                                        size="icon"
-                                                    >
-                                                        <Trash2 className="h-4 w-4" />
-                                                    </Button> */}
+                                                        <Button
+                                                            variant="outline"
+                                                            size="icon"
+                                                        >
+                                                            <Edit className="h-4 w-4" />
+                                                        </Button>
+                                                    </Link>
                                                 </div>
                                             </TableCell>
                                         </TableRow>

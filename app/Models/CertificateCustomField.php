@@ -9,4 +9,9 @@ class CertificateCustomField extends Model
 {
     use HasFactory;
     protected $guarded = [];
+
+    public function customField()
+    {
+        return $this->belongsTo(CustomField::class);
+    }
 }

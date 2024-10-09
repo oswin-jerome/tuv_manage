@@ -1,16 +1,8 @@
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
-import { Card, CardContent, CardFooter } from "@/components/ui/card";
+import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
-import {
-    Pagination,
-    PaginationContent,
-    PaginationItem,
-    PaginationLink,
-    PaginationNext,
-    PaginationPrevious,
-} from "@/components/ui/pagination";
 import {
     Table,
     TableBody,
@@ -21,49 +13,60 @@ import {
 } from "@/components/ui/table";
 import Authenticated from "@/Layouts/AuthenticatedLayout";
 import { cn } from "@/lib/utils";
-import { Certificate, Paginate } from "@/types";
+import { Certificate, Role, User } from "@/types";
 import { Link } from "@inertiajs/react";
 import { CopyIcon, Edit, Eye, Trash2Icon } from "lucide-react";
 import moment from "moment";
-import { useState } from "react";
+import * as z from "zod";
 
-export default function EmployeeList({
-    paginate,
-    request,
+const formSchema = z.object({
+    name: z.string().min(2, { message: "Name must be at least 2 characters." }),
+    email: z.string().email({ message: "Invalid email address." }),
+    phone: z
+        .string()
+        .min(10, { message: "Phone number must be at least 10 digits." }),
+    password: z.string(),
+    roles: z
+        .array(z.string())
+        .min(1, { message: "Please select at least one role." }),
+});
+
+export default function AddUser({
+    roles,
+    user,
+    certificates,
 }: {
-    paginate: Paginate<Certificate>;
-    request: any;
+    roles: Role[];
+    user: User;
+    certificates: Certificate[];
 }) {
-    const [searchTerm, setSearchTerm] = useState("");
-    // const page = router.;
     return (
         <Authenticated>
-            <Card>
-                <CardContent>
-                    <div className="container mx-auto py-10">
-                        <div className="flex justify-between">
+            <div className="container mx-auto grid gap-6">
+                <Card className="">
+                    <CardHeader></CardHeader>
+                    <CardContent>
+                        <form className="gap-4 grid grid-cols-2">
                             <div>
-                                <h1 className="text-2xl font-bold mb-5">
-                                    Certificates
-                                </h1>
-                            </div>
-                            <Link href={route("certificates.create")}>
-                                <Button>AddNew</Button>
-                            </Link>
-                        </div>
-                        <form action="" className="flex gap-4 items-end">
-                            <div>
-                                <Label>Ref #</Label>
-                                <Input
-                                    defaultValue={request.ref_no ?? ""}
-                                    name="ref_no"
-                                />
+                                <Label>Name</Label>
+                                <Input value={user.name} readOnly />
                             </div>
                             <div>
-                                <Button>Search</Button>
+                                <Label>Email</Label>
+                                <Input value={user.email} readOnly />
+                            </div>
+                            <div>
+                                <Label>Phone</Label>
+                                <Input value={user.phone} readOnly />
                             </div>
                         </form>
-                        <br />
+                    </CardContent>
+                </Card>
+                <Card>
+                    <CardHeader>
+                        <CardTitle>Created by {user.name}</CardTitle>
+                    </CardHeader>
+                    <CardContent>
                         <div className="rounded-md border">
                             <Table>
                                 <TableHeader>
@@ -76,7 +79,7 @@ export default function EmployeeList({
                                     </TableRow>
                                 </TableHeader>
                                 <TableBody>
-                                    {paginate.data.map((certificate) => (
+                                    {certificates.map((certificate) => (
                                         <TableRow key={certificate.id}>
                                             <TableCell className="font-medium">
                                                 {certificate.certifier_name}
@@ -202,57 +205,9 @@ export default function EmployeeList({
                                 </TableBody>
                             </Table>
                         </div>
-                    </div>
-                </CardContent>
-                <CardFooter>
-                    <Pagination>
-                        <PaginationContent>
-                            {paginate.links.map((link, k) => {
-                                if (link.label == "Next &raquo;") {
-                                    return (
-                                        <PaginationItem
-                                            key={k}
-                                            className={cn({
-                                                "opacity-25": link.active,
-                                            })}
-                                        >
-                                            <PaginationNext
-                                                href={link.url ?? "#"}
-                                            />
-                                        </PaginationItem>
-                                    );
-                                }
-                                if (link.label == "&laquo; Previous") {
-                                    return (
-                                        <PaginationItem
-                                            key={k}
-                                            className={cn({
-                                                "opacity-25": link.active,
-                                            })}
-                                        >
-                                            <PaginationPrevious
-                                                href={link.url ?? "#"}
-                                            />
-                                        </PaginationItem>
-                                    );
-                                }
-                                return (
-                                    <PaginationItem
-                                        key={k}
-                                        className={cn({
-                                            "opacity-25": link.active,
-                                        })}
-                                    >
-                                        <PaginationLink href={link.url ?? "#"}>
-                                            {link.label}
-                                        </PaginationLink>
-                                    </PaginationItem>
-                                );
-                            })}
-                        </PaginationContent>
-                    </Pagination>
-                </CardFooter>
-            </Card>
+                    </CardContent>
+                </Card>
+            </div>
         </Authenticated>
     );
 }

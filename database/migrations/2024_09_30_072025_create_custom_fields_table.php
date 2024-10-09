@@ -11,10 +11,14 @@ return new class extends Migration
      */
     public function up(): void
     {
-        Schema::create('certificate_types', function (Blueprint $table) {
+        Schema::create('custom_fields', function (Blueprint $table) {
             $table->id();
-            $table->string("name")->unique();
-            $table->string("layout")->default("letter");
+            $table->string("label");
+            $table->string("type");
+            $table->text("default_value")->nullable();
+            $table->unsignedBigInteger("certificate_type_id");
+
+            $table->foreign("certificate_type_id")->references("id")->on("certificate_types")->onDelete("CASCADE");
             $table->timestamps();
         });
     }
@@ -24,6 +28,6 @@ return new class extends Migration
      */
     public function down(): void
     {
-        Schema::dropIfExists('certificate_types');
+        Schema::dropIfExists('custom_fields');
     }
 };

@@ -33,7 +33,8 @@ class StoreCertificateRequest extends FormRequest
             "issuedAt" => "required|date",
             "expireAt" => "required|date",
             "certificate_type_id" => "required|exists:certificate_types,id",
-            "customFields" => "nullable|json"
+            "customFields" => "nullable|array",
+            "image" => "required|file|image"
         ];
     }
 }

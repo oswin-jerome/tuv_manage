@@ -4,12 +4,13 @@ import { PropsWithChildren, ReactNode } from "react";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
+import { Toaster } from "@/components/ui/sonner";
 import {
-    Bell,
     CheckCircleIcon,
     FileIcon,
     LayoutDashboard,
     ListIcon,
+    LogOut,
     Menu,
     Search,
     UserIcon,
@@ -60,6 +61,7 @@ export default function Authenticated({
 
     return (
         <div className="flex h-screen bg-gray-100">
+            <Toaster position="top-right" richColors={true} theme="light" />
             {/* Sidebar */}
             <div
                 className={`
@@ -69,9 +71,7 @@ export default function Authenticated({
       `}
             >
                 <div className="flex items-center justify-between h-16 px-6 bg-primary text-white">
-                    <span className="text-2xl font-semibold">
-                        FormCraft {JSON.stringify(auth.roles)}
-                    </span>
+                    <span className="text-2xl font-semibold">TUV Experts</span>
                     <Button
                         variant="ghost"
                         size="icon"
@@ -123,9 +123,11 @@ export default function Authenticated({
                         </div>
                     </div>
                     <div className="flex items-center space-x-4">
-                        <Button variant="ghost" size="icon">
-                            <Bell className="h-5 w-5" />
-                        </Button>
+                        <Link href={route("logout")} method="post">
+                            <Button variant="ghost" size="icon">
+                                <LogOut className="h-5 w-5" />
+                            </Button>
+                        </Link>
                         <Avatar>
                             <AvatarImage src="https://github.com/shadcn.png" />
                             <AvatarFallback>CN</AvatarFallback>

@@ -47,6 +47,20 @@
             color: #064463;
             font-size: 1.5em;
         }
+
+        .customTable {
+            width: 100%;
+        }
+
+        .customTable table {
+            width: 100%;
+        }
+
+        .customTable table td,
+        .customTable table th {
+            border: 2px solid #064463;
+            padding: 6px;
+        }
     </style>
 </head>
 
@@ -67,9 +81,9 @@
                     <h2 style="margin-top: 10px;color:#064463">Ref # : {{ $certificate->ref_no }}</h2>
                 </td>
                 <td>
-                    <img src="https://plus.unsplash.com/premium_photo-1683121366070-5ceb7e007a97?q=80&w=2940&auto=format&fit=crop&ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D"
-                        style="position: absolute;right: 2em;border: 4px solid #064463;" height="150px" width="130px"
-                        alt="">
+                    <img src="{{ $certificate->image }}"
+                        style="position: absolute;right: 2em;border: 4px solid #064463; object-fit: cover"
+                        height="150px" width="130px" alt="">
                 </td>
             </tr>
         </table>
@@ -167,10 +181,10 @@
                 <td>
                     <table style="width: 100%">
                         @foreach ($certificate->customFields as $key => $item)
-                            @if (!str_contains($item->key, 'custom') && $key % 2 == 0)
+                            @if ($item->type != 'custom' && $key % 2 == 0)
                                 <tr>
                                     <td class="ctd" style="padding: 10px 0px">
-                                        <h3>{{ $item->key }}</h3>
+                                        <h3>{{ $item->label }}</h3>
                                         <p>{{ $item->value }}</p>
                                     </td>
                                 </tr>
@@ -181,10 +195,10 @@
                 <td>
                     <table style="width: 100%">
                         @foreach ($certificate->customFields as $key => $item)
-                            @if (!str_contains($item->key, 'custom') && $key % 2 != 0)
+                            @if ($item->type != 'custom' && $key % 2 != 0)
                                 <tr>
                                     <td class="ctd" style="padding: 10px 0px">
-                                        <h3>{{ $item->key }}</h3>
+                                        <h3>{{ $item->label }}</h3>
                                         <p>{{ $item->value }}</p>
                                     </td>
                                 </tr>
@@ -195,12 +209,10 @@
             </tr>
         </table>
         @foreach ($certificate->customFields as $item)
-            @if (str_contains($item->key, 'custom'))
-                <p style="margin-top: 30px; color:#064463">{{ $item->value }}</p>
+            @if ($item->type == 'custom')
+                <div class="customTable" style="margin-top: 30px; color:#064463">{!! $item->value !!}</div>
             @endif
         @endforeach
-        <p style="margin-top: 30px; color:#064463">The person is Certified for the job mentioned above, to verity this
-            card Through E-Mails: operations@tuv-experts.com;</p>
 
 
     </div>

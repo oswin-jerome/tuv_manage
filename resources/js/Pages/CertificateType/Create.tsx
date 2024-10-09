@@ -4,45 +4,36 @@ import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import {
-    Table,
-    TableBody,
-    TableCaption,
-    TableCell,
-    TableHead,
-    TableHeader,
-    TableRow,
-} from "@/components/ui/table";
+    Select,
+    SelectContent,
+    SelectItem,
+    SelectTrigger,
+    SelectValue,
+} from "@/components/ui/select";
 import Authenticated from "@/Layouts/AuthenticatedLayout";
-import { router, useForm } from "@inertiajs/react";
-import { Trash2Icon } from "lucide-react";
+import { useForm } from "@inertiajs/react";
 import { FormEvent, useState } from "react";
+import { toast } from "sonner";
 
 const CreateCertificateType = () => {
     const { post, data, setData, processing, errors, reset } = useForm<{
         name: string;
-        customFields: string[];
+        layout: string;
     }>({
         name: "",
-        customFields: [],
+        layout: "",
     });
 
     const [text, setText] = useState("");
 
     const handleSubmit = (e: FormEvent) => {
         e.preventDefault();
-        router.post(
-            route("certificate-types.store"),
-            {
-                ...data,
-                customFields: JSON.stringify(data.customFields),
+        post(route("certificate-types.store"), {
+            onSuccess: () => {
+                toast.success("Certificate Type Created");
+                reset();
             },
-            {
-                onSuccess: () => {
-                    alert("Added");
-                    reset();
-                },
-            }
-        );
+        });
     };
 
     return (
@@ -63,64 +54,34 @@ const CreateCertificateType = () => {
                             />
                             <InputError message={errors.name} />
                         </div>
-                        <Table>
-                            <TableCaption>Custom fields</TableCaption>
-                            <TableHeader>
-                                <TableRow>
-                                    <TableHead>Field Name</TableHead>
-                                    <TableHead>Actions</TableHead>
-                                </TableRow>
-                            </TableHeader>
-                            <TableBody>
-                                {data?.customFields?.map((field) => {
-                                    return (
-                                        <TableRow>
-                                            <TableCell>{field}</TableCell>
-                                            <TableCell>
-                                                <Button
-                                                    size={"sm"}
-                                                    variant={"ghost"}
-                                                    onClick={(e) => {
-                                                        e.preventDefault();
-                                                        setData(
-                                                            "customFields",
-                                                            data.customFields.filter(
-                                                                (v) =>
-                                                                    v != field
-                                                            )
-                                                        );
-                                                    }}
-                                                >
-                                                    <Trash2Icon className="size-4 text-slate-500" />
-                                                </Button>
-                                            </TableCell>
-                                        </TableRow>
-                                    );
-                                })}
-                            </TableBody>
-                        </Table>
-                        <div className="flex gap-2 items-center">
-                            <Input
-                                type="text"
-                                value={text}
-                                onChange={(e) => setText(e.target.value)}
-                            />
-                            <Button
-                                onClick={(e) => {
-                                    e.preventDefault();
-                                    setData("customFields", [
-                                        ...data.customFields,
-                                        text,
-                                    ]);
-                                    setText("");
-                                }}
-                                size={"sm"}
-                            >
-                                Add
-                            </Button>
-                        </div>
                         <div>
-                            <Button disabled={processing}>Create</Button>
+                            <Label>Layout</Label>
+                            <Select
+                                value={data.layout}
+                                defaultValue={data.layout}
+                                onValueChange={(v) => setData("layout", v)}
+                            >
+                                <SelectTrigger>
+                                    <SelectValue placeholder="Select a layout" />
+                                </SelectTrigger>
+                                <SelectContent>
+                                    <SelectItem value="letter">
+                                        Letter
+                                    </SelectItem>
+                                    <SelectItem value="card">Card</SelectItem>
+                                </SelectContent>
+                            </Select>
+
+                            <InputError message={errors.layout} />
+                        </div>
+
+                        <div>
+                            <Button
+                                isLoading={processing}
+                                disabled={processing}
+                            >
+                                Create
+                            </Button>
                         </div>
                     </form>
                 </CardContent>

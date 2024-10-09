@@ -3,6 +3,7 @@
 namespace App\Http\Requests;
 
 use Illuminate\Foundation\Http\FormRequest;
+use Illuminate\Support\Facades\Auth;
 
 class UpdateCertificateRequest extends FormRequest
 {
@@ -11,7 +12,7 @@ class UpdateCertificateRequest extends FormRequest
      */
     public function authorize(): bool
     {
-        return false;
+        return Auth::check();
     }
 
     /**
@@ -21,8 +22,20 @@ class UpdateCertificateRequest extends FormRequest
      */
     public function rules(): array
     {
+        $certificate = $this->route('certificate');
+
         return [
-            //
+            "certifier_name" => "required|string",
+            "certificate_name" => "required|string",
+            "iqama" => "required|string",
+            "company" => "required|string",
+            "project" => "required|string",
+            "ref_no" => "required|string|unique:certificates,ref_no," . $certificate->id,
+            "witness" => "required|string",
+            "issuedAt" => "required|date",
+            "expireAt" => "required|date",
+            "certificate_type_id" => "required|exists:certificate_types,id",
+            "customFields" => "nullable|array"
         ];
     }
 }

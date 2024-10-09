@@ -2,6 +2,7 @@
 
 use App\Http\Controllers\CertificateController;
 use App\Http\Controllers\CertificateTypeController;
+use App\Http\Controllers\CustomFieldsController;
 use App\Http\Controllers\ProfileController;
 use App\Http\Controllers\UserController;
 use Illuminate\Foundation\Application;
@@ -24,7 +25,9 @@ Route::get('/dashboard', function () {
 Route::middleware(['auth', 'verified'])->group(function () {
     Route::resource("users", UserController::class);
     Route::resource("certificate-types", CertificateTypeController::class);
+    Route::resource("certificate-types/{certificateType}/customFields", CustomFieldsController::class);
     Route::get("certificates/pending", [CertificateController::class, "pending"])->name("certificates.pending");
+    Route::post("certificates/{certificate}/duplicate", [CertificateController::class, "duplicate"])->name("certificates.duplicate");
     Route::resource("certificates", CertificateController::class);
     Route::get("certificates/{certificate}/pdf", [CertificateController::class, "pdf"])->name("certificates.pdf");
     Route::post("certificates/{certificate}/takeAction", [CertificateController::class, "takeAction"])->name("certificates.action");

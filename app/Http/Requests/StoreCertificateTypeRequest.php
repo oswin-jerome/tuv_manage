@@ -24,7 +24,7 @@ class StoreCertificateTypeRequest extends FormRequest
     {
         return [
             "name" => "required|string|unique:certificate_types,name",
-            "customFields" => "nullable|json"
+            "layout" => "required|string"
         ];
     }
 }

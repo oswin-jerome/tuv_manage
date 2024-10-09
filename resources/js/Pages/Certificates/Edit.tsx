@@ -13,23 +13,35 @@ import {
 import { Textarea } from "@/components/ui/textarea";
 import Authenticated from "@/Layouts/AuthenticatedLayout";
 import { cn } from "@/lib/utils";
-import { CertificateType, CustomField } from "@/types";
+import { Certificate, CertificateType, CustomField } from "@/types";
 import { useForm } from "@inertiajs/react";
 import JoditEditor from "jodit-react";
-import { FormEvent, useRef, useState } from "react";
+import { FormEvent, useEffect, useRef, useState } from "react";
 import "react-quill/dist/quill.snow.css";
 import { toast } from "sonner";
 
 const CreateCertificateType = ({
     certificateTypes,
+    certificate,
 }: {
     certificateTypes: CertificateType[];
+    certificate: Certificate;
 }) => {
-    const [cType, setCType] = useState<CertificateType | undefined>();
+    const [cType, setCType] = useState<CertificateType | undefined>(
+        certificateTypes.find((c) => c.id === certificate.certificate_type_id)
+    );
     const editor = useRef(null);
 
+    useEffect(() => {
+        if (cType?.id === certificate.certificate_type_id) {
+            setData("customFields", certificate.custom_fields);
+        } else {
+            setData("customFields", cType!.custom_fields);
+        }
+    }, [cType]);
+
     const {
-        post,
+        put,
         data,
         setData,
         processing,
@@ -48,21 +60,19 @@ const CreateCertificateType = ({
         issuedAt: string;
         expireAt: string;
         certificate_type_id: string;
-        customFields: CustomField[] | undefined;
-        image: File | null | undefined;
+        customFields: CustomField[];
     }>({
-        certifier_name: "",
-        certificate_name: "",
-        iqama: "",
-        company: "",
-        project: "",
-        ref_no: "",
-        witness: "",
-        issuedAt: "",
-        expireAt: "",
-        certificate_type_id: "",
+        certifier_name: certificate.certifier_name,
+        certificate_name: certificate.certificate_name,
+        iqama: certificate.iqama,
+        company: certificate.company,
+        project: certificate.project,
+        ref_no: certificate.ref_no,
+        witness: certificate.witness,
+        issuedAt: certificate.issuedAt.toString(),
+        expireAt: certificate.expireAt.toString(),
+        certificate_type_id: certificate.certificate_type_id.toString(),
         customFields: [],
-        image: null,
     });
 
     const handleSubmit = (e: FormEvent) => {
@@ -70,12 +80,12 @@ const CreateCertificateType = ({
         console.log(data);
         transform((data) => ({
             ...data,
-            customFields: cType?.custom_fields,
+            // customFields: cType?.custom_fields,
         }));
-        post(route("certificates.store"), {
+        put(route("certificates.update", certificate.id), {
             onSuccess: () => {
-                toast.success("Certificate Added");
-                reset();
+                toast.warning("Updated!!!");
+                // reset();
             },
         });
     };
@@ -84,7 +94,7 @@ const CreateCertificateType = ({
         <Authenticated>
             <Card className="">
                 <CardHeader>
-                    <CardTitle>Create Certificate Type</CardTitle>
+                    <CardTitle>Edit Certificate Type</CardTitle>
                 </CardHeader>
                 <CardContent>
                     {hasErrors && <p>Oops</p>}
@@ -135,16 +145,6 @@ const CreateCertificateType = ({
                                 }
                             />
                             <InputError message={errors.certifier_name} />
-                        </div>
-                        <div>
-                            <Label>Photo</Label>
-                            <Input
-                                type="file"
-                                onChange={(e) =>
-                                    setData("image", e.target.files?.item(0))
-                                }
-                            />
-                            <InputError message={errors.image} />
                         </div>
                         <div>
                             <Label>Certificate Name</Label>
@@ -232,8 +232,9 @@ const CreateCertificateType = ({
                         <div className="font-semibold col-span-2 mt-10">
                             Custom fields
                         </div>
-                        {cType?.custom_fields &&
-                            cType?.custom_fields.map((val) => {
+
+                        {data?.customFields &&
+                            data?.customFields.map((val) => {
                                 return (
                                     <div
                                         key={val.id}
@@ -245,7 +246,10 @@ const CreateCertificateType = ({
                                         {val.type == "text" && (
                                             <Textarea
                                                 key={val + "input"}
-                                                value={val.default_value}
+                                                value={
+                                                    val.value ??
+                                                    val.default_value
+                                                }
                                                 onChange={(e) => {
                                                     val.default_value =
                                                         e.target.value;
@@ -254,15 +258,17 @@ const CreateCertificateType = ({
                                         )}
                                         {val.type == "custom" && (
                                             <JoditEditor
-                                                className="prose max-w-full"
+                                                className="prose max-w-full list-disc prose-h1:m-0 prose-p:m-0"
                                                 ref={editor}
-                                                value={val.default_value}
+                                                config={{
+                                                    inline: true,
+                                                }}
+                                                value={
+                                                    val.value ??
+                                                    val.default_value
+                                                }
                                                 onBlur={(newContent) => {
-                                                    val.default_value =
-                                                        newContent;
-                                                    console.log(
-                                                        cType.custom_fields
-                                                    );
+                                                    val.value = newContent;
                                                 }}
                                                 onChange={(newContent) => {}}
                                             />
@@ -275,7 +281,12 @@ const CreateCertificateType = ({
                             })}
 
                         <div className="md:col-span-2 pt-8">
-                            <Button disabled={processing}>Create</Button>
+                            <Button
+                                isLoading={processing}
+                                disabled={processing}
+                            >
+                                Update
+                            </Button>
                         </div>
                     </form>
                 </CardContent>

@@ -11,7 +11,7 @@ import {
 import Authenticated from "@/Layouts/AuthenticatedLayout";
 import { CertificateType } from "@/types";
 import { Link } from "@inertiajs/react";
-import { Edit, Eye } from "lucide-react";
+import { Eye } from "lucide-react";
 import { useState } from "react";
 
 export default function EmployeeList({
@@ -52,18 +52,25 @@ export default function EmployeeList({
                                             </TableCell>
                                             <TableCell>
                                                 <div className="flex space-x-2">
-                                                    <Button
-                                                        variant="outline"
-                                                        size="icon"
+                                                    <Link
+                                                        href={route(
+                                                            "certificate-types.show",
+                                                            employee.id
+                                                        )}
                                                     >
-                                                        <Eye className="h-4 w-4" />
-                                                    </Button>
-                                                    <Button
+                                                        <Button
+                                                            variant="outline"
+                                                            size="icon"
+                                                        >
+                                                            <Eye className="h-4 w-4" />
+                                                        </Button>
+                                                    </Link>
+                                                    {/* <Button
                                                         variant="outline"
                                                         size="icon"
                                                     >
                                                         <Edit className="h-4 w-4" />
-                                                    </Button>
+                                                    </Button> */}
                                                     {/* <Button
                                                         variant="outline"
                                                         size="icon"

@@ -14,7 +14,8 @@ class CertificateTypeController extends Controller
      */
     public function index()
     {
-        $certificateTypes = CertificateType::all();
+        $certificateTypes = CertificateType::with("customFields")->get();
+        // return $certificateTypes;
         return Inertia::render("CertificateType/Index", [
             "certificateTypes" => $certificateTypes
         ]);
@@ -43,7 +44,11 @@ class CertificateTypeController extends Controller
      */
     public function show(CertificateType $certificateType)
     {
-        //
+        $certificateType = CertificateType::with("customFields")->where("id", $certificateType->id)->firstOrFail();
+
+        return Inertia::render("CertificateType/Show", [
+            "certificateType" => $certificateType
+        ]);
     }
 
     /**

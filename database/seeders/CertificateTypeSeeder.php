@@ -15,11 +15,19 @@ class CertificateTypeSeeder extends Seeder
     {
         $certType =  CertificateType::create([
             "name" => "Operator",
-            "customFields" => json_encode(["Authorized to operate: ", "custom_text"])
+            "layout" => "card"
         ]);
+
+        $certType->customFields()->create([
+            "label" => "Authorized to operate",
+            "type" => "text",
+            "default_value" => "Fork Lift"
+        ]);
+
         $certType2 =  CertificateType::create([
             "name" => "Work At Height",
-            "customFields" => json_encode(["letter"])
+            "layout" => "card"
+
         ]);
     }
 }

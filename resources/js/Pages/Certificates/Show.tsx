@@ -12,21 +12,34 @@ import { Textarea } from "@/components/ui/textarea";
 import Authenticated from "@/Layouts/AuthenticatedLayout";
 import { Certificate } from "@/types";
 import { Link, usePage } from "@inertiajs/react";
+import JoditEditor from "jodit-react";
 import moment from "moment";
+import { useRef } from "react";
 import { usePDF } from "react-to-pdf";
 
 const Show = ({ certificate }: { certificate: Certificate }) => {
     const { toPDF, targetRef } = usePDF({ filename: "page.pdf" });
     const auth = usePage().props.auth;
     const user = auth.user;
+    const editor = useRef(null);
+
     return (
         <Authenticated>
             <div className="space-y-4">
                 <Card>
                     <CardHeader>
-                        <CardTitle>
-                            {certificate.certifier_name} - {certificate.ref_no}
-                        </CardTitle>
+                        <div className="flex justify-between">
+                            <CardTitle>
+                                {certificate.certifier_name} -{" "}
+                                {certificate.ref_no}
+                            </CardTitle>
+                            {/* <img
+                                width={100}
+                                height={100}
+                                src={certificate.image?.original_url}
+                                alt="sd"
+                            /> */}
+                        </div>
                     </CardHeader>
                     <CardContent className="grid grid-cols-2 gap-4">
                         <div>
@@ -85,6 +98,23 @@ const Show = ({ certificate }: { certificate: Certificate }) => {
                             />
                         </div>
                         {certificate.custom_fields.map((cf) => {
+                            if (cf.type == "custom") {
+                                return (
+                                    <div className="col-span-2">
+                                        <Label>{cf.key}</Label>
+                                        <JoditEditor
+                                            config={{
+                                                readonly: true,
+                                            }}
+                                            className="prose max-w-full"
+                                            ref={editor}
+                                            value={cf.value ?? ""}
+                                            onChange={(newContent) => {}}
+                                        />
+                                    </div>
+                                );
+                            }
+
                             return (
                                 <div>
                                     <Label>{cf.key}</Label>

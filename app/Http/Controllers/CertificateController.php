@@ -4,6 +4,7 @@ namespace App\Http\Controllers;
 
 use App\Http\Requests\StoreCertificateRequest;
 use App\Http\Requests\UpdateCertificateRequest;
+use App\Http\Resources\CertificateResource;
 use App\Models\Certificate;
 use App\Models\CertificateCustomField;
 use App\Models\CertificateType;
@@ -20,8 +21,9 @@ class CertificateController extends Controller
     /**
      * Display a listing of the resource.
      */
-    public function index()
+    public function index(Request $request)
     {
+
         /** @var User */
         $user = Auth::user();
 
@@ -32,14 +34,19 @@ class CertificateController extends Controller
             $certificates = $certificates->where("creator_id", "=", $user->id);
         }
 
+        if ($request->has("ref_no")) {
+            $certificates = $certificates->where("ref_no", "like", "%" . $request->get("ref_no") . "%");
+        }
 
         $certificates = $certificates->orderBy("created_at", "DESC");
-        $certificates = $certificates->get();
+        $certificates
+            = $certificates->paginate(10);
 
-        // return $certificates;
+        // return $certificates->paginate(1);
 
         return Inertia::render("Certificates/Index", [
-            "certificates" => $certificates
+            "paginate" => $certificates,
+            "request" => $request
         ]);
     }
 
@@ -49,7 +56,7 @@ class CertificateController extends Controller
     public function create()
     {
         return Inertia::render("Certificates/Create", [
-            "certificateTypes" => CertificateType::all()
+            "certificateTypes" => CertificateType::with("customFields")->get()
         ]);
     }
 
@@ -58,17 +65,23 @@ class CertificateController extends Controller
      */
     public function store(StoreCertificateRequest $request)
     {
+
         /** @var User */
         $user = Auth::user();
+        // dd($request->validated());
+        $certificate =  $user->myCertificates()->create($request->except(["customFields", "image"]));
 
-        $certificate =  $user->myCertificates()->create($request->except("customFields"));
+        $certificate->addMedia($request->file("image"))->toMediaCollection('image');
+
 
         if ($request->has("customFields")) {
 
-            foreach (json_decode($request->get("customFields")) as $key => $value) {
+            foreach (($request->get("customFields")) as $key => $value) {
                 CertificateCustomField::create([
-                    "key" => $key,
-                    "value" => $value,
+                    "label" => $value['label'],
+                    "value" => $value['default_value'],
+                    "type" => $value['type'],
+                    "custom_field_id" => $value['id'],
                     "certificate_id" => $certificate->id
                 ]);
             }
@@ -82,9 +95,33 @@ class CertificateController extends Controller
      */
     public function show(Certificate $certificate)
     {
+        $res =  $certificate->where("id", $certificate->id)->with(["certificateType", "customFields"])->first();
+
+        $res['image'] = $res->getFirstMedia('image');
+
         return Inertia::render("Certificates/Show", [
-            "certificate" =>  $certificate->where("id", $certificate->id)->with(["certificateType", "customFields"])->first()
+            "certificate" => $res
         ]);
+    }
+
+    /**
+     * Display the specified resource.
+     */
+    public function duplicate(Certificate $certificate)
+    {
+
+        $duplicate = $certificate->replicate();
+        $duplicate->ref_no = "DUPLICATE" . random_int(100, 99999);
+        $duplicate->approval_status = "pending";
+        $duplicate->push();
+
+        foreach ($certificate->customFields as $field) {
+            $df = $field->replicate();
+            $df->certificate_id = $duplicate->id;
+            $df->save();
+        }
+
+        return redirect()->route("certificates.edit", $duplicate);
     }
 
     /**
@@ -92,7 +129,11 @@ class CertificateController extends Controller
      */
     public function edit(Certificate $certificate)
     {
-        //
+        // return CertificateResource::make($certificate);
+        return Inertia::render("Certificates/Edit", [
+            "certificateTypes" => CertificateType::with("customFields")->get(),
+            "certificate" => CertificateResource::make($certificate)
+        ]);
     }
 
     /**
@@ -100,7 +141,17 @@ class CertificateController extends Controller
      */
     public function update(UpdateCertificateRequest $request, Certificate $certificate)
     {
-        //
+        $certificate->update($request->except("customFields"));
+
+        if ($request->has("customFields")) {
+
+            foreach ($request->get("customFields") as $value) {
+                $cf = CertificateCustomField::find($value['id']);
+                $cf->update($value);
+            }
+        }
+
+        return back();
     }
 
     /**
@@ -129,23 +180,17 @@ class CertificateController extends Controller
             $data[$value->key] = $value->value;
         }
 
+        $certificate['image'] = $certificate->getFirstMediaPath('image', 'thumb');
+        // return $certificate->certificateType;
 
-        if ($certificate->certificateType->name == "Work At Height") {
+        if ($certificate->certificateType->layout == "letter") {
             $pdf = Pdf::loadView('pdf.wh', [
                 "certificate" => $certificate,
                 "customFields" => $data
             ]);
-            // ->setOption('no-stop-slow-scripts', true)
-            //     ->setOption('enable-local-file-access', true)
-            //     ->setOption('enable-local-file-access', true)
-            //     ->setOption('disable-smart-shrinking', true);
             return $pdf->stream();
         }
 
-        // $pdf = FacadesPdf::view('pdf.tw', [
-        //     "certificate" => $certificate
-        // ])->landscape();
-        // return $pdf;
 
         $pdf = Pdf::loadView('pdf.operator', [
             "certificate" => $certificate,

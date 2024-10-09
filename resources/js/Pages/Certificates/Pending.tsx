@@ -104,12 +104,19 @@ export default function EmployeeList({
                                                             <Eye className="h-4 w-4" />
                                                         </Button>
                                                     </Link>
-                                                    <Button
-                                                        variant="outline"
-                                                        size="icon"
+                                                    <Link
+                                                        href={route(
+                                                            "certificates.edit",
+                                                            certificate.id
+                                                        )}
                                                     >
-                                                        <Edit className="h-4 w-4" />
-                                                    </Button>
+                                                        <Button
+                                                            variant="outline"
+                                                            size="icon"
+                                                        >
+                                                            <Edit className="h-4 w-4" />
+                                                        </Button>
+                                                    </Link>
                                                     <Link
                                                         href={route(
                                                             "certificates.destroy",

@@ -65,7 +65,13 @@ class UserController extends Controller
      */
     public function show(User $user)
     {
-        //
+        $roles =  Role::all();
+        $user = User::with("roles")->where("id", $user->id)->firstOrFail();
+        return Inertia::render("Users/Show", [
+            "user" => $user,
+            "roles" => $roles,
+            "certificates" => $user->myCertificates
+        ]);
     }
 
     /**
@@ -73,7 +79,12 @@ class UserController extends Controller
      */
     public function edit(User $user)
     {
-        //
+        $roles =  Role::all();
+        $user = User::with("roles")->where("id", $user->id)->firstOrFail();
+        return Inertia::render("Users/Edit", [
+            "user" => $user,
+            "roles" => $roles
+        ]);
     }
 
     /**
@@ -81,7 +92,21 @@ class UserController extends Controller
      */
     public function update(Request $request, User $user)
     {
-        //
+        $data =   $request->validate([
+            'name' => 'required|string|max:255',
+            'email' => 'required|string|lowercase|email|max:255|unique:users,email,' . $user->id,
+            'phone' => 'required|numeric|unique:users,phone,' . $user->id,
+            'password' => ['nullable', 'min:8'],
+            "roles" => "required|array"
+        ]);
+        unset($data['password']);
+        $user->update($data);
+        if ($request->has("password")) {
+            $user->password = Hash::make($request->get("password"));
+            $user->save();
+        }
+
+        return back();
     }
 
     /**
