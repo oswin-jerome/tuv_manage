@@ -40,7 +40,7 @@ export interface Certificate {
     certifier_name: string;
     certificate_name: string;
     iqama: string;
-    company: string;
+    company_id: string;
     project: string;
     ref_no: string;
     witness: string;
@@ -54,6 +54,7 @@ export interface Certificate {
     custom_fields: CustomField[];
     approval_status: "pending" | "approved" | "rejected";
     image?: Media;
+    company: Company;
 }
 
 export interface CustomFieldValue {
@@ -120,4 +121,14 @@ export interface Link {
     url: null | string;
     label: string;
     active: boolean;
+}
+
+export interface Company {
+    id: number;
+    name: string;
+    short_code: string;
+    sequence: number;
+    created_at: Date;
+    updated_at: Date;
+    certificates?: Certificate[];
 }

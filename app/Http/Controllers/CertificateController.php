@@ -8,8 +8,10 @@ use App\Http\Resources\CertificateResource;
 use App\Models\Certificate;
 use App\Models\CertificateCustomField;
 use App\Models\CertificateType;
+use App\Models\Company;
 use Barryvdh\DomPDF\Facade\Pdf;
 use Barryvdh\Snappy\Facades\SnappyPdf as FacadesSnappyPdf;
+use Carbon\Carbon;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Inertia\Inertia;
@@ -28,24 +30,32 @@ class CertificateController extends Controller
         $user = Auth::user();
 
         $isAdmin = $user->hasRole("admin");
-        $certificates = Certificate::with("certificateType");
+        $certificates = Certificate::with("certificateType", "company");
 
         if (!$isAdmin) {
             $certificates = $certificates->where("creator_id", "=", $user->id);
         }
 
-        if ($request->has("ref_no")) {
+        if ($request->has("ref_no") && $request->get("ref_no") != "") {
             $certificates = $certificates->where("ref_no", "like", "%" . $request->get("ref_no") . "%");
+        }
+        if ($request->has("certificate_type_id") && $request->get("certificate_type_id") != "0") {
+            $certificates = $certificates->where("certificate_type_id", $request->get("certificate_type_id"));
+        }
+        if ($request->has("company_id") && $request->get("company_id") != "0") {
+            $certificates = $certificates->where("company_id", $request->get("company_id"));
         }
 
         $certificates = $certificates->orderBy("created_at", "DESC");
         $certificates
             = $certificates->paginate(10);
 
-        // return $certificates->paginate(1);
+        // return $certificates;
 
         return Inertia::render("Certificates/Index", [
             "paginate" => $certificates,
+            "certificateTypes" => CertificateType::all(["id", "name"]),
+            "companies" => Company::all(["id", "name"]),
             "request" => $request
         ]);
     }
@@ -56,7 +66,8 @@ class CertificateController extends Controller
     public function create()
     {
         return Inertia::render("Certificates/Create", [
-            "certificateTypes" => CertificateType::with("customFields")->get()
+            "certificateTypes" => CertificateType::with("customFields")->get(),
+            "companies" => Company::all()
         ]);
     }
 
@@ -95,7 +106,8 @@ class CertificateController extends Controller
      */
     public function show(Certificate $certificate)
     {
-        $res =  $certificate->where("id", $certificate->id)->with(["certificateType", "customFields"])->first();
+
+        $res =  $certificate->where("id", $certificate->id)->with(["certificateType", "customFields", "company"])->first();
 
         $res['image'] = $res->getFirstMedia('image');
 
@@ -111,7 +123,7 @@ class CertificateController extends Controller
     {
 
         $duplicate = $certificate->replicate();
-        $duplicate->ref_no = "DUPLICATE" . random_int(100, 99999);
+        $duplicate->ref_no = null;
         $duplicate->approval_status = "pending";
         $duplicate->push();
 
@@ -132,7 +144,8 @@ class CertificateController extends Controller
         // return CertificateResource::make($certificate);
         return Inertia::render("Certificates/Edit", [
             "certificateTypes" => CertificateType::with("customFields")->get(),
-            "certificate" => CertificateResource::make($certificate)
+            "certificate" => CertificateResource::make($certificate),
+            "companies" => Company::all()
         ]);
     }
 
@@ -141,6 +154,14 @@ class CertificateController extends Controller
      */
     public function update(UpdateCertificateRequest $request, Certificate $certificate)
     {
+        // dd($certificate->approval_status);
+        if ($certificate->approval_status != "pending") {
+            // dd(0);
+            return back()->withErrors([
+                "*" => "Certificate is already approved/rejected"
+            ]);
+        }
+
         $certificate->update($request->except("customFields"));
 
         if ($request->has("customFields")) {
@@ -232,9 +253,23 @@ class CertificateController extends Controller
         ]);
 
         $certificate->approval_status = $request->get("status");
+        if ($certificate->approval_status == "approved") {
+            $certificate->ref_no = $this->createRefNo($certificate->company);
+        }
 
         $certificate->save();
 
         return back();
+    }
+
+    public function createRefNo(Company $company)
+    {
+        $string = "";
+        $string = $string . Carbon::now()->format("Y") . "-";
+        $string = $string . $company->short_code . "-";
+        $string = $string . $company->sequence;
+        $company->sequence = $company->sequence + 1;
+        $company->save();
+        return $string;
     }
 }

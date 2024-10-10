@@ -7,6 +7,7 @@ import { Input } from "@/components/ui/input";
 import { Toaster } from "@/components/ui/sonner";
 import {
     CheckCircleIcon,
+    FactoryIcon,
     FileIcon,
     LayoutDashboard,
     ListIcon,
@@ -55,6 +56,12 @@ export default function Authenticated({
             icon: ListIcon,
             label: "Certificate Types",
             href: route("certificate-types.index"),
+            show: auth.roles.includes("admin"),
+        },
+        {
+            icon: FactoryIcon,
+            label: "Companies",
+            href: route("companies.index"),
             show: auth.roles.includes("admin"),
         },
     ];

@@ -12,8 +12,16 @@ import {
     PaginationPrevious,
 } from "@/components/ui/pagination";
 import {
+    Select,
+    SelectContent,
+    SelectItem,
+    SelectTrigger,
+    SelectValue,
+} from "@/components/ui/select";
+import {
     Table,
     TableBody,
+    TableCaption,
     TableCell,
     TableHead,
     TableHeader,
@@ -21,7 +29,7 @@ import {
 } from "@/components/ui/table";
 import Authenticated from "@/Layouts/AuthenticatedLayout";
 import { cn } from "@/lib/utils";
-import { Certificate, Paginate } from "@/types";
+import { Certificate, CertificateType, Company, Paginate } from "@/types";
 import { Link } from "@inertiajs/react";
 import { CopyIcon, Edit, Eye, Trash2Icon } from "lucide-react";
 import moment from "moment";
@@ -30,8 +38,12 @@ import { useState } from "react";
 export default function EmployeeList({
     paginate,
     request,
+    certificateTypes,
+    companies,
 }: {
     paginate: Paginate<Certificate>;
+    certificateTypes: CertificateType[];
+    companies: Company[];
     request: any;
 }) {
     const [searchTerm, setSearchTerm] = useState("");
@@ -51,7 +63,10 @@ export default function EmployeeList({
                                 <Button>AddNew</Button>
                             </Link>
                         </div>
-                        <form action="" className="flex gap-4 items-end">
+                        <form
+                            action=""
+                            className="grid grid-cols-4 gap-4 items-end"
+                        >
                             <div>
                                 <Label>Ref #</Label>
                                 <Input
@@ -60,16 +75,76 @@ export default function EmployeeList({
                                 />
                             </div>
                             <div>
+                                <Label>Type</Label>
+                                <Select
+                                    name="certificate_type_id"
+                                    defaultValue={request.certificate_type_id}
+                                    onValueChange={(val) => {}}
+                                >
+                                    <SelectTrigger className="">
+                                        <SelectValue placeholder="Select a type" />
+                                    </SelectTrigger>
+                                    <SelectContent>
+                                        <SelectItem value={"0"}>
+                                            Clear
+                                        </SelectItem>
+                                        {certificateTypes?.map(
+                                            (certificateType) => {
+                                                return (
+                                                    <SelectItem
+                                                        value={certificateType.id.toString()}
+                                                    >
+                                                        {certificateType.name}
+                                                    </SelectItem>
+                                                );
+                                            }
+                                        )}
+                                    </SelectContent>
+                                </Select>
+                            </div>
+                            <div>
+                                <Label>Company</Label>
+                                <Select
+                                    name="company_id"
+                                    defaultValue={request.company_id}
+                                    onValueChange={(val) => {}}
+                                >
+                                    <SelectTrigger className="">
+                                        <SelectValue placeholder="Select a Company" />
+                                    </SelectTrigger>
+                                    <SelectContent>
+                                        <SelectItem value={"0"}>
+                                            Clear
+                                        </SelectItem>
+                                        {companies?.map((company) => {
+                                            return (
+                                                <SelectItem
+                                                    value={company.id.toString()}
+                                                >
+                                                    {company.name}
+                                                </SelectItem>
+                                            );
+                                        })}
+                                    </SelectContent>
+                                </Select>
+                            </div>
+                            <div>
                                 <Button>Search</Button>
                             </div>
                         </form>
                         <br />
                         <div className="rounded-md border">
                             <Table>
+                                <TableCaption>
+                                    Showing {paginate.data.length} of{" "}
+                                    {paginate.total}
+                                </TableCaption>
                                 <TableHeader>
                                     <TableRow>
                                         <TableHead>Name</TableHead>
                                         <TableHead>Ref #</TableHead>
+                                        <TableHead>Company</TableHead>
+                                        <TableHead>Type</TableHead>
                                         <TableHead>Expire</TableHead>
                                         <TableHead>Approved</TableHead>
                                         <TableHead>Actions</TableHead>
@@ -83,6 +158,15 @@ export default function EmployeeList({
                                             </TableCell>
                                             <TableCell className="font-medium">
                                                 {certificate.ref_no}
+                                            </TableCell>
+                                            <TableCell className="font-medium">
+                                                {certificate.company.name}
+                                            </TableCell>
+                                            <TableCell className="font-medium">
+                                                {
+                                                    certificate.certificate_type
+                                                        .name
+                                                }
                                             </TableCell>
                                             <TableCell className="font-medium">
                                                 <span

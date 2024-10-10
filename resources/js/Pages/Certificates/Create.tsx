@@ -13,7 +13,7 @@ import {
 import { Textarea } from "@/components/ui/textarea";
 import Authenticated from "@/Layouts/AuthenticatedLayout";
 import { cn } from "@/lib/utils";
-import { CertificateType, CustomField } from "@/types";
+import { CertificateType, Company, CustomField } from "@/types";
 import { useForm } from "@inertiajs/react";
 import JoditEditor from "jodit-react";
 import { FormEvent, useRef, useState } from "react";
@@ -22,8 +22,10 @@ import { toast } from "sonner";
 
 const CreateCertificateType = ({
     certificateTypes,
+    companies,
 }: {
     certificateTypes: CertificateType[];
+    companies: Company[];
 }) => {
     const [cType, setCType] = useState<CertificateType | undefined>();
     const editor = useRef(null);
@@ -41,9 +43,8 @@ const CreateCertificateType = ({
         certifier_name: string;
         certificate_name: string;
         iqama: string;
-        company: string;
+        company_id: string;
         project: string;
-        ref_no: string;
         witness: string;
         issuedAt: string;
         expireAt: string;
@@ -54,9 +55,8 @@ const CreateCertificateType = ({
         certifier_name: "",
         certificate_name: "",
         iqama: "",
-        company: "",
+        company_id: "",
         project: "",
-        ref_no: "",
         witness: "",
         issuedAt: "",
         expireAt: "",
@@ -168,14 +168,32 @@ const CreateCertificateType = ({
                         </div>
                         <div>
                             <Label>Company</Label>
-                            <Input
-                                value={data.company}
-                                onChange={(e) =>
-                                    setData("company", e.target.value)
-                                }
-                            />
-                            <InputError message={errors.company} />
+
+                            <Select
+                                required
+                                value={data.company_id}
+                                onValueChange={(val) => {
+                                    setData("company_id", val);
+                                }}
+                            >
+                                <SelectTrigger className="">
+                                    <SelectValue placeholder="Select a country" />
+                                </SelectTrigger>
+                                <SelectContent>
+                                    {companies?.map((company) => {
+                                        return (
+                                            <SelectItem
+                                                value={company.id.toString()}
+                                            >
+                                                {company.name}
+                                            </SelectItem>
+                                        );
+                                    })}
+                                </SelectContent>
+                            </Select>
+                            <InputError message={errors.company_id} />
                         </div>
+
                         <div>
                             <Label>Project</Label>
                             <Input
@@ -185,16 +203,6 @@ const CreateCertificateType = ({
                                 }
                             />
                             <InputError message={errors.project} />
-                        </div>
-                        <div>
-                            <Label>Ref #</Label>
-                            <Input
-                                value={data.ref_no}
-                                onChange={(e) =>
-                                    setData("ref_no", e.target.value)
-                                }
-                            />
-                            <InputError message={errors.ref_no} />
                         </div>
                         <div>
                             <Label>Witness</Label>

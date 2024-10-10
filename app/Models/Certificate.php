@@ -50,4 +50,9 @@ class Certificate extends Model implements HasMedia
             ->singleFile()
         ;
     }
+
+    public function company()
+    {
+        return $this->belongsTo(Company::class, "company_id", "id");
+    }
 }

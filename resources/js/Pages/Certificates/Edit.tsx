@@ -13,7 +13,7 @@ import {
 import { Textarea } from "@/components/ui/textarea";
 import Authenticated from "@/Layouts/AuthenticatedLayout";
 import { cn } from "@/lib/utils";
-import { Certificate, CertificateType, CustomField } from "@/types";
+import { Certificate, CertificateType, Company, CustomField } from "@/types";
 import { useForm } from "@inertiajs/react";
 import JoditEditor from "jodit-react";
 import { FormEvent, useEffect, useRef, useState } from "react";
@@ -23,9 +23,11 @@ import { toast } from "sonner";
 const CreateCertificateType = ({
     certificateTypes,
     certificate,
+    companies,
 }: {
     certificateTypes: CertificateType[];
     certificate: Certificate;
+    companies: Company[];
 }) => {
     const [cType, setCType] = useState<CertificateType | undefined>(
         certificateTypes.find((c) => c.id === certificate.certificate_type_id)
@@ -53,7 +55,7 @@ const CreateCertificateType = ({
         certifier_name: string;
         certificate_name: string;
         iqama: string;
-        company: string;
+        company_id: string;
         project: string;
         ref_no: string;
         witness: string;
@@ -65,7 +67,7 @@ const CreateCertificateType = ({
         certifier_name: certificate.certifier_name,
         certificate_name: certificate.certificate_name,
         iqama: certificate.iqama,
-        company: certificate.company,
+        company_id: certificate.company_id.toString(),
         project: certificate.project,
         ref_no: certificate.ref_no,
         witness: certificate.witness,
@@ -87,6 +89,11 @@ const CreateCertificateType = ({
                 toast.warning("Updated!!!");
                 // reset();
             },
+            onError: (errs) => {
+                if (errs["*"]) {
+                    toast.error(errs["*"]);
+                }
+            },
         });
     };
 
@@ -106,6 +113,9 @@ const CreateCertificateType = ({
                         <div>
                             <Label>Certificate Type</Label>
                             <Select
+                                disabled={
+                                    certificate.approval_status != "pending"
+                                }
                                 required
                                 value={data.certificate_type_id}
                                 onValueChange={(val) => {
@@ -139,6 +149,9 @@ const CreateCertificateType = ({
                         <div>
                             <Label>Certifier Name</Label>
                             <Input
+                                disabled={
+                                    certificate.approval_status != "pending"
+                                }
                                 value={data.certifier_name}
                                 onChange={(e) =>
                                     setData("certifier_name", e.target.value)
@@ -149,6 +162,9 @@ const CreateCertificateType = ({
                         <div>
                             <Label>Certificate Name</Label>
                             <Input
+                                disabled={
+                                    certificate.approval_status != "pending"
+                                }
                                 value={data.certificate_name}
                                 onChange={(e) =>
                                     setData("certificate_name", e.target.value)
@@ -159,6 +175,9 @@ const CreateCertificateType = ({
                         <div>
                             <Label>Iqama</Label>
                             <Input
+                                disabled={
+                                    certificate.approval_status != "pending"
+                                }
                                 value={data.iqama}
                                 onChange={(e) =>
                                     setData("iqama", e.target.value)
@@ -168,17 +187,39 @@ const CreateCertificateType = ({
                         </div>
                         <div>
                             <Label>Company</Label>
-                            <Input
-                                value={data.company}
-                                onChange={(e) =>
-                                    setData("company", e.target.value)
+                            <Select
+                                disabled={
+                                    certificate.approval_status != "pending"
                                 }
-                            />
-                            <InputError message={errors.company} />
+                                required
+                                defaultValue={data.company_id}
+                                onValueChange={(val) => {
+                                    setData("company_id", val);
+                                }}
+                            >
+                                <SelectTrigger className="">
+                                    <SelectValue placeholder="Select a type" />
+                                </SelectTrigger>
+                                <SelectContent>
+                                    {companies?.map((company) => {
+                                        return (
+                                            <SelectItem
+                                                value={company.id.toString()}
+                                            >
+                                                {company.name}
+                                            </SelectItem>
+                                        );
+                                    })}
+                                </SelectContent>
+                            </Select>
+                            <InputError message={errors.company_id} />
                         </div>
                         <div>
                             <Label>Project</Label>
                             <Input
+                                disabled={
+                                    certificate.approval_status != "pending"
+                                }
                                 value={data.project}
                                 onChange={(e) =>
                                     setData("project", e.target.value)
@@ -189,6 +230,7 @@ const CreateCertificateType = ({
                         <div>
                             <Label>Ref #</Label>
                             <Input
+                                disabled
                                 value={data.ref_no}
                                 onChange={(e) =>
                                     setData("ref_no", e.target.value)
@@ -199,6 +241,9 @@ const CreateCertificateType = ({
                         <div>
                             <Label>Witness</Label>
                             <Input
+                                disabled={
+                                    certificate.approval_status != "pending"
+                                }
                                 value={data.witness}
                                 onChange={(e) =>
                                     setData("witness", e.target.value)
@@ -209,6 +254,9 @@ const CreateCertificateType = ({
                         <div>
                             <Label>Issued At</Label>
                             <Input
+                                disabled={
+                                    certificate.approval_status != "pending"
+                                }
                                 type="date"
                                 value={data.issuedAt}
                                 onChange={(e) =>
@@ -220,6 +268,9 @@ const CreateCertificateType = ({
                         <div>
                             <Label>Expires At</Label>
                             <Input
+                                disabled={
+                                    certificate.approval_status != "pending"
+                                }
                                 type="date"
                                 value={data.expireAt}
                                 onChange={(e) =>
@@ -245,23 +296,29 @@ const CreateCertificateType = ({
                                         <Label>{val.label}</Label>
                                         {val.type == "text" && (
                                             <Textarea
+                                                disabled={
+                                                    certificate.approval_status !=
+                                                    "pending"
+                                                }
                                                 key={val + "input"}
-                                                value={
+                                                defaultValue={
                                                     val.value ??
                                                     val.default_value
                                                 }
                                                 onChange={(e) => {
-                                                    val.default_value =
-                                                        e.target.value;
+                                                    val.value = e.target.value;
                                                 }}
                                             />
                                         )}
                                         {val.type == "custom" && (
                                             <JoditEditor
-                                                className="prose max-w-full list-disc prose-h1:m-0 prose-p:m-0"
+                                                className="prose max-w-full list-disc"
                                                 ref={editor}
                                                 config={{
                                                     inline: true,
+                                                    disabled:
+                                                        certificate.approval_status !=
+                                                        "pending",
                                                 }}
                                                 value={
                                                     val.value ??
@@ -283,7 +340,10 @@ const CreateCertificateType = ({
                         <div className="md:col-span-2 pt-8">
                             <Button
                                 isLoading={processing}
-                                disabled={processing}
+                                disabled={
+                                    certificate.approval_status != "pending" ||
+                                    processing
+                                }
                             >
                                 Update
                             </Button>

@@ -62,7 +62,10 @@ const Show = ({ certificate }: { certificate: Certificate }) => {
                         </div>
                         <div>
                             <Label>Company</Label>
-                            <Input value={certificate.company} readOnly />
+                            <Input
+                                value={certificate?.company?.name}
+                                readOnly
+                            />
                         </div>
                         <div>
                             <Label>Ref #</Label>

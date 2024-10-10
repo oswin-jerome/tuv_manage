@@ -127,7 +127,7 @@
             <tr>
                 <td class="ctd">
                     <h3>Company</h3>
-                    <p>{{ $certificate->company }}</p>
+                    <p>{{ $certificate->company->name }}</p>
                 </td>
             </tr>
         </table>
@@ -135,7 +135,7 @@
             <tr>
                 <td>
                     <p style="font-size: 1.3em;color: #064463">operations@tuv-experts.com</p>
-                    <p style="font-size: 1.3em;color: #064463">www-tuv-experts.com</p>
+                    <p style="font-size: 1.3em;color: #064463">www.tuv-experts.com</p>
                 </td>
                 <td>
                     <img src="foot.png" width="400px" alt="">
@@ -164,17 +164,6 @@
             <tr>
                 <td style="padding: 10px;"></td>
             </tr>
-            {{-- @foreach ($certificate->customFields as $item)
-                @if (!str_contains($item->key, 'custom'))
-                    <tr>
-                        <td class="ctd">
-                            <h3>{{ $item->key }}</h3>
-                            <p>{{ $item->value }}</p>
-                        </td>
-                    </tr>
-                @endif
-            @endforeach --}}
-
         </table>
         <table style="width: 100%">
             <tr>
@@ -214,6 +203,20 @@
             @endif
         @endforeach
 
+        <div style="position: absolute;left:16px;right:16px; bottom: 12px; color: #064463">
+            <table style="width: 100%">
+                <tr>
+                    <td>
+                        <img src="{{ public_path('logo.png') }}" style="width: 100px" alt="">
+                    </td>
+                    <td style="text-align: right">
+                        <p>+966-565463773</p>
+                        <p>+966-565461187</p>
+                    </td>
+                </tr>
+            </table>
+
+        </div>
 
     </div>
 

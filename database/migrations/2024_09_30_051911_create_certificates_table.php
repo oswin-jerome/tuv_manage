@@ -16,9 +16,8 @@ return new class extends Migration
             $table->string("certificate_name");
             $table->string("certifier_name");
             $table->string("iqama");
-            $table->string("company"); // TODO: Make is a separate table
             $table->string("project")->nullable(); // TODO: Make is a separate table
-            $table->string("ref_no")->unique();
+            $table->string("ref_no")->unique()->nullable();
             $table->string("witness");
             $table->date("issuedAt")->default(now());
             $table->date("expireAt");

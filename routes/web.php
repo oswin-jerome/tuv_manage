@@ -2,6 +2,7 @@
 
 use App\Http\Controllers\CertificateController;
 use App\Http\Controllers\CertificateTypeController;
+use App\Http\Controllers\CompanyController;
 use App\Http\Controllers\CustomFieldsController;
 use App\Http\Controllers\ProfileController;
 use App\Http\Controllers\UserController;
@@ -31,6 +32,7 @@ Route::middleware(['auth', 'verified'])->group(function () {
     Route::resource("certificates", CertificateController::class);
     Route::get("certificates/{certificate}/pdf", [CertificateController::class, "pdf"])->name("certificates.pdf");
     Route::post("certificates/{certificate}/takeAction", [CertificateController::class, "takeAction"])->name("certificates.action");
+    Route::resource("companies", CompanyController::class);
 });
 
 Route::middleware('auth')->group(function () {
