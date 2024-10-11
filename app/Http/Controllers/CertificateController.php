@@ -186,8 +186,15 @@ class CertificateController extends Controller
      */
     public function destroy(Certificate $certificate)
     {
-        $certificate->customFields()->delete();
+        /**@var User */
+        $user = Auth::user();
+        $isAdmin = $user->hasRole("admin");
 
+        if (!$isAdmin) {
+            return response('Unauthorized.', 401);
+        }
+
+        $certificate->customFields()->delete();
         $certificate->delete();
 
         return back();

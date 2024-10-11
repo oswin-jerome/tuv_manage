@@ -177,7 +177,7 @@ const CreateCertificateType = ({
                                 }}
                             >
                                 <SelectTrigger className="">
-                                    <SelectValue placeholder="Select a country" />
+                                    <SelectValue placeholder="Select a company" />
                                 </SelectTrigger>
                                 <SelectContent>
                                     {companies?.map((company) => {
