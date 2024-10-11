@@ -252,6 +252,7 @@ const CreateCertificateType = ({
                                         <Label>{val.label}</Label>
                                         {val.type == "text" && (
                                             <Textarea
+                                                required
                                                 key={val + "input"}
                                                 value={val.default_value}
                                                 onChange={(e) => {

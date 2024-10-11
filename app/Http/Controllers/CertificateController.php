@@ -86,7 +86,7 @@ class CertificateController extends Controller
         // dd($request->validated());
         $certificate =  $user->myCertificates()->create($request->except(["customFields", "image"]));
 
-        $certificate->addMedia($request->file("image"))->toMediaCollection('image');
+        $certificate->addMedia($request->file("image"))->preservingOriginal()->toMediaCollection('image');
 
 
         if ($request->has("customFields")) {
