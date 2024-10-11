@@ -11,6 +11,7 @@ RUN apt-get update && apt-get install -y \
     libpng-dev \
     libonig-dev \
     libxml2-dev \
+    libjpeg62-turbo-dev \
     zip \
     unzip \
     nodejs \
@@ -36,8 +37,8 @@ RUN composer install --optimize-autoloader --no-dev
 RUN npm install && npm run build
 
 # Set file permissions for Laravel
-RUN chown -R www-data:www-data /var/www \
-    && chmod -R 755 /var/www/storage
+# RUN chown -R www-data:www-data /var/www \
+RUN chmod -R 755 /var/www/storage
 
 # Expose port 9000 and start PHP-FPM server
 EXPOSE 9000
