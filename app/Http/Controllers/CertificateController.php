@@ -14,6 +14,7 @@ use Barryvdh\Snappy\Facades\SnappyPdf as FacadesSnappyPdf;
 use Carbon\Carbon;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\DB;
 use Inertia\Inertia;
 use Knp\Snappy\Pdf as SnappyPdf;
 use SimpleSoftwareIO\QrCode\Facades\QrCode;
@@ -78,6 +79,8 @@ class CertificateController extends Controller
     public function store(StoreCertificateRequest $request)
     {
 
+        DB::beginTransaction();
+
         /** @var User */
         $user = Auth::user();
         // dd($request->validated());
@@ -98,6 +101,8 @@ class CertificateController extends Controller
                 ]);
             }
         }
+
+        DB::commit();
 
         return redirect(route("certificates.show", $certificate));
     }

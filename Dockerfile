@@ -12,11 +12,20 @@ RUN apt-get update && apt-get install -y \
     libonig-dev \
     libxml2-dev \
     libjpeg62-turbo-dev \
+    libfreetype6-dev \
     zip \
     unzip \
     nodejs \
     npm \
+    && docker-php-ext-configure gd --with-freetype --with-jpeg \
     && docker-php-ext-install pdo_mysql mbstring exif pcntl bcmath gd
+
+# RUN docker-php-ext-install mbstring
+
+# RUN docker-php-ext-install zip
+RUN docker-php-ext-install fileinfo
+
+# RUN docker-php-ext-install gd
 
 # Install Composer
 COPY --from=composer:latest /usr/bin/composer /usr/bin/composer
