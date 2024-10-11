@@ -78,16 +78,16 @@ export default function EmployeeList({
                                 <Label>Type</Label>
                                 <Select
                                     name="certificate_type_id"
-                                    defaultValue={request.certificate_type_id}
+                                    defaultValue={
+                                        request.certificate_type_id ?? "0"
+                                    }
                                     onValueChange={(val) => {}}
                                 >
                                     <SelectTrigger className="">
                                         <SelectValue placeholder="Select a type" />
                                     </SelectTrigger>
                                     <SelectContent>
-                                        <SelectItem value={"0"}>
-                                            Clear
-                                        </SelectItem>
+                                        <SelectItem value={"0"}>All</SelectItem>
                                         {certificateTypes?.map(
                                             (certificateType) => {
                                                 return (
@@ -106,16 +106,14 @@ export default function EmployeeList({
                                 <Label>Company</Label>
                                 <Select
                                     name="company_id"
-                                    defaultValue={request.company_id}
+                                    defaultValue={request.company_id ?? "0"}
                                     onValueChange={(val) => {}}
                                 >
                                     <SelectTrigger className="">
                                         <SelectValue placeholder="Select a Company" />
                                     </SelectTrigger>
                                     <SelectContent>
-                                        <SelectItem value={"0"}>
-                                            Clear
-                                        </SelectItem>
+                                        <SelectItem value={"0"}>All</SelectItem>
                                         {companies?.map((company) => {
                                             return (
                                                 <SelectItem

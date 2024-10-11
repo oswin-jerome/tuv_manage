@@ -71,7 +71,7 @@ const Button = React.forwardRef<HTMLButtonElement, ButtonProps>(
                     {isLoading && (
                         <CircleDashedIcon className="animate-spin " />
                     )}
-                    <div {...props}></div>
+                    <div>{props.children}</div>
                 </Comp>
             </div>
         );

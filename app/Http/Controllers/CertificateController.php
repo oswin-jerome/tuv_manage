@@ -16,6 +16,7 @@ use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Inertia\Inertia;
 use Knp\Snappy\Pdf as SnappyPdf;
+use SimpleSoftwareIO\QrCode\Facades\QrCode;
 use Spatie\LaravelPdf\Facades\Pdf as FacadesPdf;
 
 class CertificateController extends Controller
@@ -39,10 +40,10 @@ class CertificateController extends Controller
         if ($request->has("ref_no") && $request->get("ref_no") != "") {
             $certificates = $certificates->where("ref_no", "like", "%" . $request->get("ref_no") . "%");
         }
-        if ($request->has("certificate_type_id") && $request->get("certificate_type_id") != "0") {
+        if ($request->has("certificate_type_id") && $request->get("certificate_type_id") != "0" && $request->get("certificate_type_id") != "") {
             $certificates = $certificates->where("certificate_type_id", $request->get("certificate_type_id"));
         }
-        if ($request->has("company_id") && $request->get("company_id") != "0") {
+        if ($request->has("company_id") && $request->get("company_id") != "0" && $request->get("company_id") != "") {
             $certificates = $certificates->where("company_id", $request->get("company_id"));
         }
 
@@ -201,13 +202,17 @@ class CertificateController extends Controller
             $data[$value->key] = $value->value;
         }
 
+        $qr  = base64_encode(QrCode::format('svg')->size(200)->errorCorrection('H')->generate($certificate->ref_no));
+        // dd($qr);
+
         $certificate['image'] = $certificate->getFirstMediaPath('image', 'thumb');
         // return $certificate->certificateType;
 
         if ($certificate->certificateType->layout == "letter") {
             $pdf = Pdf::loadView('pdf.wh', [
                 "certificate" => $certificate,
-                "customFields" => $data
+                "customFields" => $data,
+                "qr" => $qr
             ]);
             return $pdf->stream();
         }
@@ -215,7 +220,9 @@ class CertificateController extends Controller
 
         $pdf = Pdf::loadView('pdf.operator', [
             "certificate" => $certificate,
-            "customFields" => $data
+            "customFields" => $data,
+            "qr" => $qr
+
 
         ])->setPaper([0, 0, 830, 521], "portrait");
         return $pdf->stream();

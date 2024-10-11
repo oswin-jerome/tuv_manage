@@ -187,8 +187,10 @@
                     <img src="{{ public_path('logo.png') }}" width="150px" class="h-16" alt="">
                 </td>
                 <td>
-                    <img src="{{ public_path('qr.png') }}" style="width: 100px; position: absolute; top:2em; right:2em"
-                        alt="">
+                    <div style="width: 100px; position: absolute; top:2em; right:2em">
+                        <img style="width: 100px" src="data:image/png;base64, {!! $qr !!}" alt="">
+                        <p style="margin-top: 4px; text-align: center">Scan to verify</p>
+                    </div>
                 </td>
             </tr>
         </thead>
@@ -215,7 +217,8 @@
                         </div>
                     </td>
                     <td style="">
-                        <img src="{{ public_path('logo.png') }}" width="150px" class="h-12" alt="">
+                        <img style="float: right; margin-bottom: 10px" src="{{ public_path('logo.png') }}"
+                            width="150px" class="h-12" alt="">
                     </td>
                 </tr>
             </tbody>

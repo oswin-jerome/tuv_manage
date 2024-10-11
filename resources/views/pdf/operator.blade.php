@@ -65,6 +65,7 @@
 </head>
 
 <body>
+
     <div style="padding: 2em">
         <img src="{{ public_path('logo.png') }}"
             style="position: absolute; top: 0;
@@ -151,9 +152,10 @@
             alt="">
         <img src="{{ public_path('logo.png') }}" style="width: 200px; position: absolute; top:2em; left:2em"
             alt="">
-        <img src="{{ public_path('qr.png') }}" style="width: 200px; position: absolute; top:2em; right:2em"
-            alt="">
-
+        <div style="width: 200px; position: absolute; top:2em; right:2em">
+            <img src="data:image/png;base64, {!! $qr !!}" alt="">
+            <p style="margin-top: 4px; text-align: center">Scan to verify</p>
+        </div>
         <table style="width: 60%; margin-top: 120px">
             <tr>
                 <td class="ctd">
