@@ -237,7 +237,7 @@ const CreateCertificateType = ({
                             <InputError message={errors.expireAt} />
                         </div>
 
-                        <div className="font-semibold col-span-2 mt-10">
+                        <div className="font-semibold md:col-span-2 mt-10">
                             Custom fields
                         </div>
                         {cType?.custom_fields &&
@@ -246,7 +246,8 @@ const CreateCertificateType = ({
                                     <div
                                         key={val.id}
                                         className={cn({
-                                            "col-span-2": val.type == "custom",
+                                            "md:col-span-2":
+                                                val.type == "custom",
                                         })}
                                     >
                                         <Label>{val.label}</Label>

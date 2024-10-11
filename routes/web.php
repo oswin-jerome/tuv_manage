@@ -6,6 +6,10 @@ use App\Http\Controllers\CompanyController;
 use App\Http\Controllers\CustomFieldsController;
 use App\Http\Controllers\ProfileController;
 use App\Http\Controllers\UserController;
+use App\Models\Certificate;
+use App\Models\Company;
+use App\Models\User;
+use Carbon\Carbon;
 use Illuminate\Foundation\Application;
 use Illuminate\Support\Facades\Route;
 use Inertia\Inertia;
@@ -20,7 +24,22 @@ Route::get('/', function () {
 });
 
 Route::get('/dashboard', function () {
-    return Inertia::render('Dashboard');
+
+    $users = User::count();
+    $companies = Company::count();
+    $certificates = Certificate::where("approval_status", "approved")->count();
+    $pending = Certificate::where("approval_status", "pending")->count();
+    $certificatesThisMonth = Certificate::whereMonth('created_at', Carbon::now()->month)
+        ->whereYear('created_at', Carbon::now()->year)
+        ->count();
+
+    return Inertia::render('Dashboard', [
+        "users" => $users,
+        "companies" => $companies,
+        "certificates" => $certificates,
+        "pending" => $pending,
+        "certificatesThisMonth" => $certificatesThisMonth,
+    ]);
 })->middleware(['auth', 'verified'])->name('dashboard');
 
 Route::middleware(['auth', 'verified'])->group(function () {

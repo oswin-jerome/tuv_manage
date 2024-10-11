@@ -136,7 +136,12 @@ export default function Authenticated({
                             </Button>
                         </Link>
                         <Avatar>
-                            <AvatarImage src="https://github.com/shadcn.png" />
+                            <AvatarImage
+                                src={
+                                    "https://ui-avatars.com/api/?name=" +
+                                    user.name
+                                }
+                            />
                             <AvatarFallback>CN</AvatarFallback>
                         </Avatar>
                     </div>
@@ -149,7 +154,7 @@ export default function Authenticated({
 
                 {/* Footer */}
                 <footer className="bg-white border-t py-4 px-6 text-center text-sm text-gray-600">
-                    <p>© 2023 </p>
+                    <p>© 2024, TUV Experts </p>
                 </footer>
             </div>
         </div>

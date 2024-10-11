@@ -103,7 +103,7 @@ const Show = ({ certificate }: { certificate: Certificate }) => {
                         {certificate.custom_fields.map((cf) => {
                             if (cf.type == "custom") {
                                 return (
-                                    <div className="col-span-2">
+                                    <div className="md:col-span-2">
                                         <Label>{cf.key}</Label>
                                         <JoditEditor
                                             config={{
