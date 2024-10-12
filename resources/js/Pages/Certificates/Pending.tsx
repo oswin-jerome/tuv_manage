@@ -54,7 +54,7 @@ export default function EmployeeList({
                                                 {certificate.certifier_name}
                                             </TableCell>
                                             <TableCell className="font-medium">
-                                                {certificate.company.name}
+                                                {certificate.company?.name}
                                             </TableCell>
                                             <TableCell className="font-medium">
                                                 <span

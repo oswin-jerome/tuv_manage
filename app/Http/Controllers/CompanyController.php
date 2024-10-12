@@ -67,6 +67,8 @@ class CompanyController extends Controller
             ]);
         }
 
+        $company->update($request->validated());
+
         return back();
     }
 

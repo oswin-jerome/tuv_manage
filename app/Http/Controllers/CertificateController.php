@@ -251,7 +251,7 @@ class CertificateController extends Controller
             return response('Unauthorized.', 401);
         }
 
-        $certificates = Certificate::with("certificateType")->where("approval_status", "=", "pending")->get();
+        $certificates = Certificate::with(["certificateType", "company"])->where("approval_status", "=", "pending")->get();
 
         return Inertia::render("Certificates/Pending", [
             "certificates" => $certificates
