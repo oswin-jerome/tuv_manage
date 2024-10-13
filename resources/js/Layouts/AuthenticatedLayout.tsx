@@ -120,13 +120,19 @@ export default function Authenticated({
                         >
                             <Menu className="h-6 w-6" />
                         </Button>
-                        <div className="relative">
-                            <Search className="absolute left-2 top-1/2 transform -translate-y-1/2 h-4 w-4 text-gray-400" />
-                            <Input
-                                type="search"
-                                placeholder="Search..."
-                                className="pl-8 w-64"
-                            />
+                        <div className="relative hidden md:block">
+                            <form
+                                action={route("certificates.index")}
+                                method="get"
+                            >
+                                <Search className="absolute left-2 top-1/2 transform -translate-y-1/2 h-4 w-4 text-gray-400" />
+                                <Input
+                                    name="ref_no"
+                                    type="search"
+                                    placeholder="Search..."
+                                    className="pl-8 w-64"
+                                />
+                            </form>
                         </div>
                     </div>
                     <div className="flex items-center space-x-4">
