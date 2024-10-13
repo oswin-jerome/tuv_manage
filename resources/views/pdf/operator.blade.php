@@ -100,7 +100,7 @@
                 </td>
                 <td class="ctd">
                     <h3>Valid Till</h3>
-                    <p>{{ $certificate->expireAt }}</p>
+                    <p>{{ $certificate->expireAt->format('d / m / Y') }}</p>
                 </td>
             </tr>
             <tr>
@@ -116,8 +116,8 @@
                     <p>{{ $certificate->project }}</p>
                 </td>
                 <td class="ctd">
-                    <h3>Expires At</h3>
-                    <p>{{ $certificate->expireAt }}</p>
+                    <h3>Issued At</h3>
+                    <p>{{ $certificate->issuedAt->format('d / m / Y') }}</p>
                 </td>
 
 

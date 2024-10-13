@@ -19,6 +19,10 @@ class Certificate extends Model implements HasMedia
 
 
     protected $guarded = [];
+    protected $casts = [
+        "expireAt" => "date",
+        "issuedAt" => "date"
+    ];
 
     public function certificateType()
     {
