@@ -11,6 +11,7 @@ use App\Models\Company;
 use App\Models\User;
 use Carbon\Carbon;
 use Illuminate\Foundation\Application;
+use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Route;
 use Inertia\Inertia;
 
@@ -25,17 +26,36 @@ Route::get('/', function () {
 
 Route::get('/dashboard', function () {
 
-    $users = User::count();
-    $companies = Company::count();
-    $certificates = Certificate::where("approval_status", "approved")->count();
-    $pending = Certificate::where("approval_status", "pending")->count();
+    /** @var User */
+    $user = Auth::user();
+    $isAdmin = $user->hasRole("admin");
+    if ($isAdmin) {
+
+        $users = User::count();
+        $companies = Company::count();
+        $certificates = Certificate::where("approval_status", "approved")->count();
+        $pending = Certificate::where("approval_status", "pending")->count();
+        $certificatesThisMonth = Certificate::whereMonth('created_at', Carbon::now()->month)
+            ->whereYear('created_at', Carbon::now()->year)
+            ->count();
+
+        return Inertia::render('Dashboard', [
+            "users" => $users,
+            "companies" => $companies,
+            "certificates" => $certificates,
+            "pending" => $pending,
+            "certificatesThisMonth" => $certificatesThisMonth,
+        ]);
+    }
+
+    $certificates = Certificate::where("approval_status", "approved")->where("creator_id", "=", $user->id)->count();
+    $pending = Certificate::where("approval_status", "pending")->where("creator_id", "=", $user->id)->count();
     $certificatesThisMonth = Certificate::whereMonth('created_at', Carbon::now()->month)
         ->whereYear('created_at', Carbon::now()->year)
+        ->where("creator_id", "=", $user->id)
         ->count();
 
-    return Inertia::render('Dashboard', [
-        "users" => $users,
-        "companies" => $companies,
+    return Inertia::render('UserDashboard', [
         "certificates" => $certificates,
         "pending" => $pending,
         "certificatesThisMonth" => $certificatesThisMonth,
