@@ -76,6 +76,7 @@ export interface CustomField {
     certificate_type_id?: number;
     created_at?: Date;
     updated_at?: Date;
+    custom_field_id: number;
 }
 
 export interface Media {

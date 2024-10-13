@@ -5,6 +5,7 @@ namespace App\Http\Controllers;
 use App\Models\CertificateType;
 use App\Models\CustomField;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Auth;
 
 class CustomFieldsController extends Controller
 {
@@ -43,25 +44,38 @@ class CustomFieldsController extends Controller
     /**
      * Display the specified resource.
      */
-    public function show(CustomField $customField)
+    public function show(CertificateType $certificateType, CustomField $customField, Request $request)
     {
-        //
+
+        return $certificateType;
     }
 
     /**
      * Show the form for editing the specified resource.
      */
-    public function edit(CustomField $customField)
-    {
-        //
-    }
+    public function edit(CustomField $customField) {}
 
     /**
      * Update the specified resource in storage.
      */
-    public function update(Request $request, CustomField $customField)
+    public function update(CertificateType $certificateType, CustomField $customField, Request $request)
     {
-        //
+
+        /**@var User */
+        $user = Auth::user();
+        $isAdmin = $user->hasRole("admin");
+
+        if (!$isAdmin) {
+            return back()->withErrors([
+                "error" => "You are not an admin"
+            ]);
+        }
+
+        $data =  $request->validate([
+            "default_value" => "nullable|string",
+        ]);
+
+        $customField->update($data);
     }
 
     /**

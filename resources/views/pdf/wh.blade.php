@@ -13,10 +13,53 @@
     {{-- <script src="https://cdn.tailwindcss.com"></script> --}}
     <style>
         * {
-            /* font-size: 20px; */
+            font-size: 14px;
             margin: 0;
             font-family: Arial, Helvetica, sans-serif;
         }
+
+        @page {
+            margin: 100px 25px;
+        }
+
+        body {
+            font-family: sans-serif;
+            margin: 0.5cm 0;
+            text-align: justify;
+        }
+
+        #header,
+        #footer {
+            position: fixed;
+            left: 0;
+            right: 0;
+            color: #aaa;
+            font-size: 0.9em;
+        }
+
+        #header {
+            top: 0;
+            border-bottom: 0.1pt solid #aaa;
+        }
+
+        #footer {
+            bottom: 0;
+            border-top: 0.1pt solid #aaa;
+        }
+
+        #header table,
+        #footer table {
+            width: 100%;
+            border-collapse: collapse;
+            border: none;
+        }
+
+        #header td,
+        #footer td {
+            padding: 0;
+            width: 50%;
+        }
+
 
         .page-break {
             page-break-after: always;
@@ -39,7 +82,7 @@
         .prose {
             /* General settings */
             color: #374151;
-            max-width: 65ch;
+            /* max-width: 65ch; */
             /* Headings */
             /* Paragraphs */
             /* Links */
@@ -153,27 +196,32 @@
 
         .prose table {
             width: 100%;
-            margin-top: 1.25rem;
-            margin-bottom: 1.25rem;
+            /* margin-top: 1.25rem;
+            margin-bottom: 1.25rem; */
             border-collapse: collapse;
         }
 
         .prose th {
-            border-bottom: 2px solid #d1d5db;
-            padding: 0.75rem;
-            text-align: left;
-            font-weight: 600;
+            /* border-bottom: 2px solid #d1d5db; */
+            padding: 6px;
+            /* text-align: left;
+            font-weight: 600; */
         }
 
         .prose td {
-            border-bottom: 1px solid #d1d5db;
-            padding: 0.75rem;
+            padding: 6px;
         }
 
         .prose hr {
             border-top: 1px solid #e5e7eb;
             margin-top: 2rem;
             margin-bottom: 2rem;
+        }
+
+        table {
+            /* page-break-before: always;
+            page-break-after: always; */
+            /* page-break-inside: auto; */
         }
     </style>
     <!-- Scripts -->
@@ -195,16 +243,7 @@
             </tr>
         </thead>
     </table>
-    <p style="margin-top: 40px; text-align: center; font-weight: bold">Certificate No. {{ $certificate->ref_no }}</p>
     <br>
-    <p>Presented to,</p>
-    <p style="font-weight: 700">{{ $certificate->certifier_name }}</p>
-    <br>
-    @foreach ($certificate->customFields as $item)
-        @if ($item->type == 'custom')
-            <div class="customTable prose">{!! $provider::formatStringCertificate($item->value, $certificate) !!}</div>
-        @endif
-    @endforeach
     <div style="position:fixed;bottom:1em;left:1em;right:1em">
         <table style="width: 100%;">
             <tbody>
@@ -224,6 +263,17 @@
             </tbody>
         </table>
     </div>
+    {{-- <p style="margin-top: 40px; text-align: center; font-weight: bold">Certificate No. {{ $certificate->ref_no }}</p>
+    <br>
+    <p>Presented to,</p>
+    <p style="font-weight: 700">{{ $certificate->certifier_name }}</p>
+    <br> --}}
+    @foreach ($certificate->customFields as $item)
+        @if ($item->type == 'custom')
+            <div class="customTable prose">{!! $provider::formatStringCertificate($item->value, $certificate) !!}</div>
+        @endif
+    @endforeach
+
 </body>
 
 </html>

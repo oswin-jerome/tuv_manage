@@ -14,7 +14,7 @@ import { Textarea } from "@/components/ui/textarea";
 import Authenticated from "@/Layouts/AuthenticatedLayout";
 import { cn } from "@/lib/utils";
 import { Certificate, CertificateType, Company, CustomField } from "@/types";
-import { useForm } from "@inertiajs/react";
+import { router, useForm } from "@inertiajs/react";
 import JoditEditor from "jodit-react";
 import { FormEvent, useEffect, useRef, useState } from "react";
 import "react-quill/dist/quill.snow.css";
@@ -294,46 +294,93 @@ const CreateCertificateType = ({
                                                 val.type == "custom",
                                         })}
                                     >
-                                        <Label>{val.label}</Label>
-                                        {val.type == "text" && (
-                                            <Textarea
-                                                disabled={
-                                                    certificate.approval_status !=
-                                                    "pending"
-                                                }
-                                                key={val + "input"}
-                                                defaultValue={
-                                                    val.value ??
-                                                    val.default_value
-                                                }
-                                                onChange={(e) => {
-                                                    val.value = e.target.value;
+                                        <div className="flex justify-between items-center mb-1">
+                                            <Label>{val.label}</Label>
+                                            <Button
+                                                onClick={(e) => {
+                                                    e.preventDefault();
+                                                    console.log(
+                                                        data.certificate_type_id,
+                                                        val.custom_field_id
+                                                    );
+                                                    router.put(
+                                                        route(
+                                                            "customFields.update",
+                                                            [
+                                                                data.certificate_type_id,
+                                                                val.custom_field_id,
+                                                            ]
+                                                        ),
+                                                        {
+                                                            default_value:
+                                                                val.value,
+                                                        },
+                                                        {
+                                                            onSuccess: () => {
+                                                                toast.info(
+                                                                    "Updated"
+                                                                );
+                                                            },
+                                                            onError: (e) => {
+                                                                console.log(e);
+                                                                toast.error(
+                                                                    e.error
+                                                                );
+                                                            },
+                                                        }
+                                                    );
                                                 }}
-                                            />
-                                        )}
-                                        {val.type == "custom" && (
-                                            <JoditEditor
-                                                className="prose max-w-full list-disc"
-                                                ref={editor}
-                                                config={{
-                                                    inline: true,
-                                                    disabled:
+                                                size={"sm"}
+                                                variant={"link"}
+                                            >
+                                                Set as default
+                                            </Button>
+                                        </div>
+
+                                        <div>
+                                            {val.type == "text" && (
+                                                <Textarea
+                                                    disabled={
                                                         certificate.approval_status !=
-                                                        "pending",
-                                                }}
-                                                value={
-                                                    val.value ??
-                                                    val.default_value
-                                                }
-                                                onBlur={(newContent) => {
-                                                    val.value = newContent;
-                                                }}
-                                                onChange={(newContent) => {}}
+                                                        "pending"
+                                                    }
+                                                    key={val + "input"}
+                                                    defaultValue={
+                                                        val.value ??
+                                                        val.default_value
+                                                    }
+                                                    onChange={(e) => {
+                                                        val.value =
+                                                            e.target.value;
+                                                    }}
+                                                />
+                                            )}
+                                            {val.type == "custom" && (
+                                                <JoditEditor
+                                                    className="prose max-w-full list-disc"
+                                                    ref={editor}
+                                                    config={{
+                                                        inline: true,
+                                                        disabled:
+                                                            certificate.approval_status !=
+                                                            "pending",
+                                                    }}
+                                                    value={
+                                                        val.value ??
+                                                        val.default_value
+                                                    }
+                                                    onBlur={(newContent) => {
+                                                        val.value = newContent;
+                                                    }}
+                                                    onChange={(
+                                                        newContent
+                                                    ) => {}}
+                                                />
+                                            )}
+                                            <InputError
+                                                message={errors.customFields}
                                             />
-                                        )}
-                                        <InputError
-                                            message={errors.customFields}
-                                        />
+                                        </div>
                                     </div>
                                 );
                             })}
@@ -348,8 +395,15 @@ const CreateCertificateType = ({
                             >
                                 Update
                             </Button>
+                            <br />
                         </div>
                     </form>
+                    <a
+                        target="__blank"
+                        href={route("certificates.pdf", certificate.id)}
+                    >
+                        <Button>Preview PDF</Button>
+                    </a>
                 </CardContent>
             </Card>
         </Authenticated>

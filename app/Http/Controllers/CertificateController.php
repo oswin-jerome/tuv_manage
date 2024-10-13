@@ -225,7 +225,7 @@ class CertificateController extends Controller
                 "certificate" => $certificate,
                 "customFields" => $data,
                 "qr" => $qr
-            ]);
+            ])->setPaper("A4");
             return $pdf->stream();
         }
 
