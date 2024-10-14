@@ -34,7 +34,9 @@ class UpdateCertificateRequest extends FormRequest
             "issuedAt" => "required|date",
             "expireAt" => "required|date",
             "certificate_type_id" => "required|exists:certificate_types,id",
-            "customFields" => "nullable|array"
+            "customFields" => "nullable|array",
+            "image" => "nullable|image|mimes:jpg,jpeg,png|max:2048"
+
         ];
     }
 }

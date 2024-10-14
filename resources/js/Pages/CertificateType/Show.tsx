@@ -34,6 +34,19 @@ const CreateCertificateType = ({
     const editor = useRef(null);
     const { data, setData, errors, post, reset } = useForm<CustomField>();
     const [customField, setCustomField] = useState<CustomField>();
+    const {
+        data: certData,
+        setData: setCert,
+        put,
+        errors: certErrors,
+    } = useForm<CertificateType>({
+        name: certificateType.name,
+        layout: certificateType.layout,
+        id: certificateType.id,
+        created_at: certificateType.created_at,
+        updated_at: certificateType.updated_at,
+        custom_fields: certificateType.custom_fields,
+    });
 
     const handleCustomFieldAdd = (e: FormEvent) => {
         e.preventDefault();
@@ -54,14 +67,60 @@ const CreateCertificateType = ({
                         <CardTitle>Certificate Type</CardTitle>
                     </CardHeader>
                     <CardContent>
-                        <form className="space-y-4">
+                        <form
+                            onSubmit={(e) => {
+                                e.preventDefault();
+                                put(
+                                    route(
+                                        "certificate-types.update",
+                                        certificateType.id
+                                    ),
+                                    {
+                                        onSuccess: () => {
+                                            toast.info("Updated");
+                                        },
+                                    }
+                                );
+                            }}
+                            className="space-y-4"
+                        >
                             <div>
                                 <Label>Name</Label>
-                                <Input value={certificateType.name} />
+                                <Input
+                                    defaultValue={certData.name}
+                                    onChange={(e) => {
+                                        setCert("name", e.target.value);
+                                    }}
+                                />
+                                <InputError message={certErrors.name} />
                             </div>
                             <div>
                                 <Label>Layout</Label>
-                                <Input value={certificateType.layout} />
+                                <Select
+                                    defaultValue={certificateType.layout}
+                                    onValueChange={(c) => {
+                                        setCert("layout", c);
+                                    }}
+                                >
+                                    <SelectTrigger>
+                                        <SelectValue placeholder="Select a layout" />
+                                    </SelectTrigger>
+                                    <SelectContent>
+                                        <SelectItem value="letter">
+                                            Letter
+                                        </SelectItem>
+                                        <SelectItem value="letter_WAH">
+                                            WAH Letter
+                                        </SelectItem>
+                                        <SelectItem value="card">
+                                            Card
+                                        </SelectItem>
+                                    </SelectContent>
+                                </Select>
+                                <InputError message={certErrors.layout} />
+                            </div>
+                            <div>
+                                <Button size={"sm"}>Update</Button>
                             </div>
                         </form>
                     </CardContent>

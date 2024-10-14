@@ -64,7 +64,10 @@ class CertificateTypeController extends Controller
      */
     public function update(UpdateCertificateTypeRequest $request, CertificateType $certificateType)
     {
-        //
+        // dd($request->validated());
+        $certificateType->update($request->validated());
+
+        return back();
     }
 
     /**

@@ -86,7 +86,10 @@ class CertificateController extends Controller
         // dd($request->validated());
         $certificate =  $user->myCertificates()->create($request->except(["customFields", "image"]));
 
-        $certificate->addMedia($request->file("image"))->preservingOriginal()->toMediaCollection('image');
+        if ($request->hasFile("image")) {
+
+            $certificate->addMedia($request->file("image"))->preservingOriginal()->toMediaCollection('image');
+        }
 
 
         if ($request->has("customFields")) {
@@ -213,15 +216,25 @@ class CertificateController extends Controller
         foreach ($certificate->customFields as $key => $value) {
             $data[$value->key] = $value->value;
         }
-
-        $qr  = base64_encode(QrCode::format('svg')->size(200)->errorCorrection('H')->generate($certificate->ref_no));
-        // dd($qr);
+        $qr = "";
+        if ($certificate->ref_no != null) {
+            $qr  = base64_encode(QrCode::format('svg')->size(200)->errorCorrection('H')->generate($certificate->ref_no));
+        }
 
         $certificate['image'] = $certificate->getFirstMediaPath('image', 'thumb');
         // return $certificate->certificateType;
 
         if ($certificate->certificateType->layout == "letter") {
-            $pdf = Pdf::loadView('pdf.wh', [
+            $pdf = Pdf::loadView('pdf.letter', [
+                "certificate" => $certificate,
+                "customFields" => $data,
+                "qr" => $qr
+            ])->setPaper("A4");
+            return $pdf->stream();
+        }
+
+        if ($certificate->certificateType->layout == "letter_WAH") {
+            $pdf = Pdf::loadView('pdf.letter2', [
                 "certificate" => $certificate,
                 "customFields" => $data,
                 "qr" => $qr

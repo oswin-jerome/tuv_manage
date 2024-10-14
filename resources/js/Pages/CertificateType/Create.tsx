@@ -68,6 +68,9 @@ const CreateCertificateType = () => {
                                     <SelectItem value="letter">
                                         Letter
                                     </SelectItem>
+                                    <SelectItem value="letter_WAH">
+                                        WAH Letter
+                                    </SelectItem>
                                     <SelectItem value="card">Card</SelectItem>
                                 </SelectContent>
                             </Select>
