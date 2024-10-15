@@ -14,7 +14,7 @@ import { Textarea } from "@/components/ui/textarea";
 import Authenticated from "@/Layouts/AuthenticatedLayout";
 import { cn } from "@/lib/utils";
 import { CertificateType, Company, CustomField } from "@/types";
-import { useForm } from "@inertiajs/react";
+import { router, useForm } from "@inertiajs/react";
 import JoditEditor from "jodit-react";
 import { FormEvent, useRef, useState } from "react";
 import "react-quill/dist/quill.snow.css";
@@ -67,15 +67,20 @@ const CreateCertificateType = ({
 
     const handleSubmit = (e: FormEvent) => {
         e.preventDefault();
-        console.log(data);
         transform((data) => ({
             ...data,
             customFields: cType?.custom_fields,
         }));
         post(route("certificates.store"), {
-            onSuccess: () => {
-                toast.success("Certificate Added");
+            onSuccess: (w) => {
                 reset();
+                toast.success("Certificate Added");
+                setTimeout(() => {
+                    router.get(route("certificates.index"));
+                }, 3000);
+            },
+            onError: (e) => {
+                toast.error(e[Object.keys(e)[0]]);
             },
         });
     };
@@ -250,36 +255,89 @@ const CreateCertificateType = ({
                                                 val.type == "custom",
                                         })}
                                     >
-                                        <Label>{val.label}</Label>
-                                        {val.type == "text" && (
-                                            <Textarea
-                                                required
-                                                key={val + "input"}
-                                                value={val.default_value}
-                                                onChange={(e) => {
-                                                    val.default_value =
-                                                        e.target.value;
-                                                }}
-                                            />
-                                        )}
-                                        {val.type == "custom" && (
-                                            <JoditEditor
-                                                className="prose max-w-full"
-                                                ref={editor}
-                                                value={val.default_value}
-                                                onBlur={(newContent) => {
-                                                    val.default_value =
-                                                        newContent;
+                                        <div className="flex justify-between items-center mb-1">
+                                            <Label>{val.label}</Label>
+                                            <Button
+                                                onClick={(e) => {
+                                                    e.preventDefault();
                                                     console.log(
-                                                        cType.custom_fields
+                                                        data.certificate_type_id,
+                                                        val.id
+                                                    );
+                                                    router.put(
+                                                        route(
+                                                            "customFields.update",
+                                                            [
+                                                                data.certificate_type_id,
+                                                                val.id,
+                                                            ]
+                                                        ),
+                                                        {
+                                                            default_value:
+                                                                val.default_value,
+                                                        },
+                                                        {
+                                                            onSuccess: () => {
+                                                                toast.info(
+                                                                    "Updated"
+                                                                );
+                                                            },
+                                                            onError: (e) => {
+                                                                console.log(e);
+                                                                toast.error(
+                                                                    e.error
+                                                                );
+                                                            },
+                                                        }
                                                     );
                                                 }}
-                                                onChange={(newContent) => {}}
+                                                size={"sm"}
+                                                variant={"link"}
+                                            >
+                                                Set as default
+                                            </Button>
+                                        </div>
+                                        <div
+                                            key={val.id}
+                                            className={cn({
+                                                "md:col-span-2":
+                                                    val.type == "custom",
+                                            })}
+                                        >
+                                            {val.type == "text" && (
+                                                <Textarea
+                                                    required
+                                                    key={val + "input"}
+                                                    defaultValue={
+                                                        val.default_value
+                                                    }
+                                                    onChange={(e) => {
+                                                        val.default_value =
+                                                            e.target.value;
+                                                    }}
+                                                />
+                                            )}
+                                            {val.type == "custom" && (
+                                                <JoditEditor
+                                                    className="prose max-w-full"
+                                                    ref={editor}
+                                                    value={val.default_value}
+                                                    onBlur={(newContent) => {
+                                                        val.default_value =
+                                                            newContent;
+                                                        console.log(
+                                                            cType.custom_fields
+                                                        );
+                                                    }}
+                                                    onChange={(
+                                                        newContent
+                                                    ) => {}}
+                                                />
+                                            )}
+                                            <InputError
+                                                message={errors.customFields}
                                             />
-                                        )}
-                                        <InputError
-                                            message={errors.customFields}
-                                        />
+                                        </div>
                                     </div>
                                 );
                             })}

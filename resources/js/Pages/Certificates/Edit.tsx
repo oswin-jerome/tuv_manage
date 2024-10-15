@@ -43,7 +43,7 @@ const CreateCertificateType = ({
     }, [cType]);
 
     const {
-        put,
+        post,
         data,
         setData,
         processing,
@@ -63,6 +63,7 @@ const CreateCertificateType = ({
         expireAt: string;
         certificate_type_id: string;
         customFields: CustomField[];
+        image: File | null | undefined;
     }>({
         certifier_name: certificate.certifier_name,
         certificate_name: certificate.certificate_name,
@@ -75,6 +76,7 @@ const CreateCertificateType = ({
         expireAt: certificate.expireAt.toString(),
         certificate_type_id: certificate.certificate_type_id.toString(),
         customFields: [],
+        image: null,
     });
 
     const handleSubmit = (e: FormEvent) => {
@@ -83,8 +85,9 @@ const CreateCertificateType = ({
         transform((data) => ({
             ...data,
             // customFields: cType?.custom_fields,
+            _method: "PUT",
         }));
-        put(route("certificates.update", certificate.id), {
+        post(route("certificates.update", certificate.id), {
             onSuccess: () => {
                 toast.warning("Updated!!!");
                 // reset();
@@ -113,9 +116,6 @@ const CreateCertificateType = ({
                         <div>
                             <Label>Certificate Type</Label>
                             <Select
-                                disabled={
-                                    certificate.approval_status != "pending"
-                                }
                                 required
                                 value={data.certificate_type_id}
                                 onValueChange={(val) => {
@@ -149,9 +149,6 @@ const CreateCertificateType = ({
                         <div>
                             <Label>Certifier Name</Label>
                             <Input
-                                disabled={
-                                    certificate.approval_status != "pending"
-                                }
                                 value={data.certifier_name}
                                 onChange={(e) =>
                                     setData("certifier_name", e.target.value)
@@ -160,11 +157,18 @@ const CreateCertificateType = ({
                             <InputError message={errors.certifier_name} />
                         </div>
                         <div>
+                            <Label>Photo</Label>
+                            <Input
+                                type="file"
+                                onChange={(e) =>
+                                    setData("image", e.target.files?.item(0))
+                                }
+                            />
+                            <InputError message={errors.image} />
+                        </div>
+                        <div>
                             <Label>Certificate Name</Label>
                             <Input
-                                disabled={
-                                    certificate.approval_status != "pending"
-                                }
                                 value={data.certificate_name}
                                 onChange={(e) =>
                                     setData("certificate_name", e.target.value)
@@ -175,9 +179,6 @@ const CreateCertificateType = ({
                         <div>
                             <Label>Iqama</Label>
                             <Input
-                                disabled={
-                                    certificate.approval_status != "pending"
-                                }
                                 value={data.iqama}
                                 onChange={(e) =>
                                     setData("iqama", e.target.value)
@@ -188,9 +189,6 @@ const CreateCertificateType = ({
                         <div>
                             <Label>Company</Label>
                             <Select
-                                disabled={
-                                    certificate.approval_status != "pending"
-                                }
                                 required
                                 defaultValue={data.company_id}
                                 onValueChange={(val) => {
@@ -217,9 +215,6 @@ const CreateCertificateType = ({
                         <div>
                             <Label>Project</Label>
                             <Input
-                                disabled={
-                                    certificate.approval_status != "pending"
-                                }
                                 value={data.project}
                                 onChange={(e) =>
                                     setData("project", e.target.value)
@@ -241,9 +236,6 @@ const CreateCertificateType = ({
                         <div>
                             <Label>Witness</Label>
                             <Input
-                                disabled={
-                                    certificate.approval_status != "pending"
-                                }
                                 value={data.witness}
                                 onChange={(e) =>
                                     setData("witness", e.target.value)
@@ -254,9 +246,6 @@ const CreateCertificateType = ({
                         <div>
                             <Label>Issued At</Label>
                             <Input
-                                disabled={
-                                    certificate.approval_status != "pending"
-                                }
                                 type="date"
                                 value={data.issuedAt}
                                 onChange={(e) =>
@@ -268,9 +257,6 @@ const CreateCertificateType = ({
                         <div>
                             <Label>Expires At</Label>
                             <Input
-                                disabled={
-                                    certificate.approval_status != "pending"
-                                }
                                 type="date"
                                 value={data.expireAt}
                                 onChange={(e) =>
@@ -340,10 +326,6 @@ const CreateCertificateType = ({
                                         <div>
                                             {val.type == "text" && (
                                                 <Textarea
-                                                    disabled={
-                                                        certificate.approval_status !=
-                                                        "pending"
-                                                    }
                                                     key={val + "input"}
                                                     defaultValue={
                                                         val.value ??
@@ -361,9 +343,6 @@ const CreateCertificateType = ({
                                                     ref={editor}
                                                     config={{
                                                         inline: true,
-                                                        disabled:
-                                                            certificate.approval_status !=
-                                                            "pending",
                                                     }}
                                                     value={
                                                         val.value ??
@@ -388,10 +367,7 @@ const CreateCertificateType = ({
                         <div className="md:col-span-2 pt-8">
                             <Button
                                 isLoading={processing}
-                                disabled={
-                                    certificate.approval_status != "pending" ||
-                                    processing
-                                }
+                                disabled={processing}
                             >
                                 Update
                             </Button>

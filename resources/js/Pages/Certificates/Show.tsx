@@ -33,6 +33,33 @@ const Show = ({ certificate }: { certificate: Certificate }) => {
                                 {certificate.certifier_name} -{" "}
                                 {certificate.ref_no}
                             </CardTitle>
+                            {auth.roles.includes("admin") &&
+                                certificate.approval_status == "pending" && (
+                                    <div className=" flex gap-4">
+                                        <Link
+                                            href={route(
+                                                "certificates.action",
+                                                certificate.id
+                                            )}
+                                            method="post"
+                                            data={{ status: "approved" }}
+                                        >
+                                            <Button>Approve</Button>
+                                        </Link>
+                                        <Link
+                                            href={route(
+                                                "certificates.action",
+                                                certificate.id
+                                            )}
+                                            method="post"
+                                            data={{ status: "rejected" }}
+                                        >
+                                            <Button variant={"destructive"}>
+                                                Reject
+                                            </Button>
+                                        </Link>
+                                    </div>
+                                )}
                             {/* <img
                                 width={100}
                                 height={100}
@@ -129,7 +156,7 @@ const Show = ({ certificate }: { certificate: Certificate }) => {
                     <CardFooter>
                         {auth.roles.includes("admin") &&
                             certificate.approval_status == "pending" && (
-                                <div className="space-x-4">
+                                <div className=" flex gap-4">
                                     <Link
                                         href={route(
                                             "certificates.action",

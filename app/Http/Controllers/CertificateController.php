@@ -34,9 +34,9 @@ class CertificateController extends Controller
         $isAdmin = $user->hasRole("admin");
         $certificates = Certificate::with("certificateType", "company");
 
-        if (!$isAdmin) {
-            $certificates = $certificates->where("creator_id", "=", $user->id);
-        }
+        // if (!$isAdmin) {
+        //     $certificates = $certificates->where("creator_id", "=", $user->id);
+        // }
 
         if ($request->has("ref_no") && $request->get("ref_no") != "") {
             $certificates = $certificates->where("ref_no", "like", "%" . $request->get("ref_no") . "%");
@@ -107,7 +107,7 @@ class CertificateController extends Controller
 
         DB::commit();
 
-        return redirect(route("certificates.show", $certificate));
+        return back();
     }
 
     /**
@@ -130,9 +130,14 @@ class CertificateController extends Controller
      */
     public function duplicate(Certificate $certificate)
     {
+        /** @var User */
+        $user = Auth::user();
+
+        $isAdmin = $user->hasRole("admin");
 
         $duplicate = $certificate->replicate();
         $duplicate->ref_no = null;
+        $duplicate->creator_id = $user->id;
         $duplicate->approval_status = "pending";
         $duplicate->push();
 
@@ -163,15 +168,34 @@ class CertificateController extends Controller
      */
     public function update(UpdateCertificateRequest $request, Certificate $certificate)
     {
-        // dd($certificate->approval_status);
-        if ($certificate->approval_status != "pending") {
-            // dd(0);
+        DB::beginTransaction();
+
+        /** @var User */
+        $user = Auth::user();
+
+        $isAdmin = $user->hasRole("admin");
+
+        if ($certificate->creator_id != $user->id && !$isAdmin) {
+            return back()->withErrors([
+                "*" => "Certificate don't belong to you"
+            ]);
+        }
+
+        if ($certificate->approval_status != "pending" && Carbon::parse($certificate->issued_at)->addDays(15)->isBefore(Carbon::now())) {
+
             return back()->withErrors([
                 "*" => "Certificate is already approved/rejected"
             ]);
         }
 
-        $certificate->update($request->except("customFields"));
+
+        if ($certificate->approval_status != "pending" && !$isAdmin) {
+            return back()->withErrors([
+                "*" => "Only Admin can edit certificates after approving"
+            ]);
+        }
+
+        $certificate->update($request->except(["customFields", "image"]));
 
         if ($request->has("customFields")) {
 
@@ -180,6 +204,13 @@ class CertificateController extends Controller
                 $cf->update($value);
             }
         }
+
+        if ($request->hasFile("image")) {
+
+            $certificate->addMedia($request->file("image"))->preservingOriginal()->toMediaCollection('image');
+        }
+
+        DB::commit();
 
         return back();
     }

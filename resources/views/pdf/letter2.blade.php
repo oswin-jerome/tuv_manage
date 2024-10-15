@@ -235,16 +235,26 @@
                     <img src="{{ public_path('logo.png') }}" width="150px" class="h-16" alt="">
                 </td>
                 <td>
-                    <div style="width: 100px; position: absolute; top:2em; right:2em">
-                        <img style="width: 100px" src="data:image/png;base64, {!! $qr !!}" alt="">
-                        <p style="margin-top: 4px; text-align: center">Scan to verify</p>
+                    <div style="width: 215px; position: absolute; top:2em; right:2em">
+                        <table>
+                            <tr>
+                                <td style="width: 100px"><img
+                                        style="width: 100px;border: 4px solid #064463;margin-right:8px;"
+                                        src="{{ $certificate->image }}" alt="">
+                                </td>
+                                <td><img style="width: 100px" src="data:image/png;base64, {!! $qr !!}"
+                                        alt="">
+                                    <p style="margin-top: 4px; text-align: center">Scan to verify</p>
+                                </td>
+                            </tr>
+                        </table>
                     </div>
                 </td>
             </tr>
         </thead>
     </table>
     <br>
-    <div style="position:fixed;bottom:1em;left:1em;right:1em">
+    <div style="position:fixed;bottom:2em;left:1em;right:1em">
         <table style="width: 100%;">
             <tbody>
                 <tr>
@@ -256,8 +266,8 @@
                         </div>
                     </td>
                     <td style="">
-                        <img style="float: right; margin-bottom: 10px" src="{{ public_path('foot.png') }}"
-                            width="150px" class="h-12" alt="">
+                        <img style="float: right; margin-bottom: 30px" src="{{ public_path('foot.png') }}"
+                            width="300px" class="h-12" alt="">
                     </td>
                 </tr>
             </tbody>

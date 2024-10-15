@@ -17,8 +17,8 @@ return new class extends Migration
             $table->text("value");
             $table->text("type");
             $table->unsignedBigInteger("certificate_id");
-            $table->unsignedBigInteger("custom_field_id");
-            $table->foreign("custom_field_id")->references("id")->on("custom_fields");
+            $table->unsignedBigInteger("custom_field_id")->nullable();
+            $table->foreign("custom_field_id")->references("id")->on("custom_fields")->onDelete("set null");
             $table->timestamps();
         });
     }

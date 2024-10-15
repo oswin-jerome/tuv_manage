@@ -22,8 +22,10 @@ class UpdateCertificateTypeRequest extends FormRequest
      */
     public function rules(): array
     {
+        $company = $this->route('certificate_type');
+
         return [
-            "name" => "required|string|unique:certificate_types,name",
+            "name" => "required|string|unique:certificate_types,name," . $company->id,
             "layout" => "required|string"
         ];
     }
