@@ -105,6 +105,7 @@ class UserController extends Controller
             $user->password = Hash::make($request->get("password"));
             $user->save();
         }
+        $user->syncRoles($request->roles);
 
         return back();
     }

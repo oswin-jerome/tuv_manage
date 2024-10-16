@@ -89,7 +89,7 @@ const CreateCertificateType = ({
             _method: "PUT",
         }));
         post(route("certificates.update", certificate.id), {
-            onSuccess: () => {
+            onSuccess: (e) => {
                 toast.warning("Updated!!!");
                 // reset();
             },
@@ -159,13 +159,13 @@ const CreateCertificateType = ({
                         </div>
                         <div>
                             <Label>Photo</Label>
-                            <Input
+                            {/* <Input
                                 type="file"
                                 onChange={(e) =>
                                     setData("image", e.target.files?.item(0))
                                 }
                             />
-                            <InputError message={errors.image} />
+                            <InputError message={errors.image} /> */}
                         </div>
                         <div>
                             <Label>Certificate Name</Label>

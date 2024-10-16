@@ -116,7 +116,7 @@ const Show = ({ certificate }: { certificate: Certificate }) => {
                             <Input
                                 value={
                                     certificate.expireAt == null
-                                        ? "No Applicable"
+                                        ? "Not Applicable"
                                         : moment(certificate.expireAt).format(
                                               "D MMM Y"
                                           )

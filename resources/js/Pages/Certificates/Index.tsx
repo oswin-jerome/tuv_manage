@@ -175,7 +175,7 @@ export default function EmployeeList({
                                                 >
                                                     {certificate.expireAt ==
                                                     null
-                                                        ? "No Applicable"
+                                                        ? "Not Applicable"
                                                         : moment(
                                                               certificate.expireAt
                                                           ).format("D MMM Y")}
@@ -218,12 +218,21 @@ export default function EmployeeList({
                                                         </Button>
                                                     </Link>
                                                     <Link
+                                                        as="button"
+                                                        disabled={
+                                                            certificate.editable !=
+                                                            "ALLOWED"
+                                                        }
                                                         href={route(
                                                             "certificates.edit",
                                                             certificate.id
                                                         )}
                                                     >
                                                         <Button
+                                                            disabled={
+                                                                certificate.editable !=
+                                                                "ALLOWED"
+                                                            }
                                                             variant="outline"
                                                             size="icon"
                                                         >
@@ -235,6 +244,10 @@ export default function EmployeeList({
                                                             "certificates.destroy",
                                                             certificate.id
                                                         )}
+                                                        disabled={
+                                                            !certificate.canDelete
+                                                        }
+                                                        as="button"
                                                         method="delete"
                                                         onClick={(e) => {
                                                             const res =
@@ -249,6 +262,9 @@ export default function EmployeeList({
                                                         }}
                                                     >
                                                         <Button
+                                                            disabled={
+                                                                !certificate.canDelete
+                                                            }
                                                             variant="outline"
                                                             size="icon"
                                                         >

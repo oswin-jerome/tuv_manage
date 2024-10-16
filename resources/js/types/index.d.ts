@@ -51,6 +51,8 @@ export interface Certificate {
     updated_at: Date;
     certificate_type: CertificateType;
     isExpired: boolean;
+    canDelete: boolean;
+    editable: string;
     custom_fields: CustomField[];
     approval_status: "pending" | "approved" | "rejected";
     image?: Media;

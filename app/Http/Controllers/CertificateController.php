@@ -168,7 +168,6 @@ class CertificateController extends Controller
      */
     public function update(UpdateCertificateRequest $request, Certificate $certificate)
     {
-        DB::beginTransaction();
 
         /** @var User */
         $user = Auth::user();
@@ -176,11 +175,11 @@ class CertificateController extends Controller
         $isAdmin = $user->hasRole("admin");
 
         if ($certificate->creator_id != $user->id && !$isAdmin) {
+
             return back()->withErrors([
                 "*" => "Certificate don't belong to you"
             ]);
         }
-
         if ($certificate->approval_status != "pending" && Carbon::parse($certificate->issued_at)->addDays(15)->isBefore(Carbon::now())) {
 
             return back()->withErrors([
@@ -194,6 +193,7 @@ class CertificateController extends Controller
                 "*" => "Only Admin can edit certificates after approving"
             ]);
         }
+        DB::beginTransaction();
 
         $certificate->update($request->except(["customFields", "image"]));
 
@@ -224,7 +224,11 @@ class CertificateController extends Controller
         $user = Auth::user();
         $isAdmin = $user->hasRole("admin");
 
-        if (!$isAdmin) {
+        if ($certificate->approval_status != "pending" && !$isAdmin) {
+            return response('Unauthorized.', 401);
+        }
+
+        if ($certificate->creator_id != $user->id && !$isAdmin) {
             return response('Unauthorized.', 401);
         }
 
