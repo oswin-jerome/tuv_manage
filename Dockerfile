@@ -18,7 +18,7 @@ RUN apt-get update && apt-get install -y \
     nodejs \
     npm \
     && docker-php-ext-configure gd --with-freetype --with-jpeg \
-    && docker-php-ext-install pdo_mysql mbstring exif pcntl bcmath gd ext-zip
+    && docker-php-ext-install pdo_mysql mbstring exif pcntl bcmath gd zip
 
 # RUN docker-php-ext-install mbstring
 
