@@ -18,7 +18,11 @@ class RenderService
 		$string = str_replace("{{WITNESS}}", $certificate->witness, $string);
 		$string = str_replace("{{IQAMA}}", $certificate->iqama, $string);
 		$string = str_replace("{{COMPANY_NAME}}", $certificate->company->name, $string);
-		$string = str_replace("{{EXPIRE_AT}}", $certificate->expireAt->format('d / m / Y'), $string);
+		if ($certificate->expireAt != null) {
+			$string = str_replace("{{EXPIRE_AT}}", $certificate->expireAt->format('d / m / Y'), $string);
+		} else {
+			$string = str_replace("{{EXPIRE_AT}}", "Not Applicable", $string);
+		}
 		$string = str_replace("{{ISSUED_AT}}", $certificate->issuedAt->format('d / m / Y'), $string);
 
 		foreach (
@@ -28,7 +32,6 @@ class RenderService
 			/** @var CertificateCustomField */
 			$certificateCustomField = $cf;
 			$string = str_replace("{{CUSTOM_" . $certificateCustomField->label . "}}", $certificateCustomField->value, $string);
-			# code...
 		}
 
 		return $string;

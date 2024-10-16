@@ -7,7 +7,7 @@
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1">
 
-    <title>Doc</title>
+    <title>PDF - {{ $certificate->ref_no }}</title>
     <style>
         * {
 

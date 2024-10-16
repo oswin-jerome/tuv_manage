@@ -36,6 +36,10 @@ class Certificate extends Model implements HasMedia
 
     public function getIsExpiredAttribute()
     {
+        if ($this->expireAt == null) {
+            return false;
+        }
+
         return Carbon::parse($this->expireAt)->isBefore(Carbon::now());
     }
 

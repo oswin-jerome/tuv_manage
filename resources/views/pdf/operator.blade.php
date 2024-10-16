@@ -100,7 +100,11 @@
                 </td>
                 <td class="ctd">
                     <h3>Valid Till</h3>
-                    <p>{{ $certificate->expireAt->format('d / m / Y') }}</p>
+                    @if ($certificate->expireAt != null)
+                        <p>{{ $certificate->expireAt->format('d / m / Y') }}</p>
+                    @else
+                        <p>Not Applicable</p>
+                    @endif
                 </td>
             </tr>
             <tr>

@@ -173,9 +173,12 @@ export default function EmployeeList({
                                                             certificate.isExpired,
                                                     })}
                                                 >
-                                                    {moment(
-                                                        certificate.expireAt
-                                                    ).format("D MMM Y")}
+                                                    {certificate.expireAt ==
+                                                    null
+                                                        ? "No Applicable"
+                                                        : moment(
+                                                              certificate.expireAt
+                                                          ).format("D MMM Y")}
                                                 </span>
                                             </TableCell>
                                             <TableCell className="font-medium">

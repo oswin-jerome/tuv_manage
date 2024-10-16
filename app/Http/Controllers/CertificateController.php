@@ -249,7 +249,7 @@ class CertificateController extends Controller
         }
         $qr = "";
         if ($certificate->ref_no != null) {
-            $qr  = base64_encode(QrCode::format('svg')->size(200)->errorCorrection('H')->generate($certificate->ref_no));
+            $qr  = base64_encode(QrCode::format('svg')->size(200)->errorCorrection('H')->generate(env("VERIFY_URL", "") . "&ref_no=" . $certificate->ref_no));
         }
 
         $certificate['image'] = $certificate->getFirstMediaPath('image', 'thumb');

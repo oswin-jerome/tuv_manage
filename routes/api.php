@@ -22,20 +22,20 @@ Route::get('/validate', function (Request $request) {
         return response()->json([
             "status" => "INVALID",
             "message" => "Provided ref # is not found"
-        ]);
+        ])->header("Access-Control-Allow-Origin",  "*");
     }
 
     if ($certificate->isExpired) {
         return response()->json([
-            "status" => "INVALID",
+            "status" => "EXPIRED",
             "message" => "Certificate Expired",
             "certificate" => $certificate
-        ]);
+        ])->header("Access-Control-Allow-Origin",  "*");
     }
 
     return response()->json([
-        "status" => "Valid",
+        "status" => "VALID",
         "message" => "Certificate is valid",
         "certificate" => $certificate
-    ]);
+    ])->header("Access-Control-Allow-Origin",  "*");
 });

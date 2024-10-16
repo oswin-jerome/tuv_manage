@@ -30,7 +30,7 @@ class StoreCertificateRequest extends FormRequest
             "project" => "required|string",
             "witness" => "required|string",
             "issuedAt" => "required|date",
-            "expireAt" => "required|date",
+            "expireAt" => "nullable|date",
             "certificate_type_id" => "required|exists:certificate_types,id",
             "customFields" => "nullable|array",
             "customFields.*.default_value" => "required|string",

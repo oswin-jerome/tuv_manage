@@ -45,7 +45,7 @@ export interface Certificate {
     ref_no: string;
     witness: string;
     issuedAt: Date;
-    expireAt: Date;
+    expireAt?: Date;
     certificate_type_id: number;
     created_at: Date;
     updated_at: Date;

@@ -114,9 +114,13 @@ const Show = ({ certificate }: { certificate: Certificate }) => {
                         <div>
                             <Label>Expires At</Label>
                             <Input
-                                value={moment(certificate.expireAt).format(
-                                    "D MMM Y"
-                                )}
+                                value={
+                                    certificate.expireAt == null
+                                        ? "No Applicable"
+                                        : moment(certificate.expireAt).format(
+                                              "D MMM Y"
+                                          )
+                                }
                                 readOnly
                             />
                         </div>

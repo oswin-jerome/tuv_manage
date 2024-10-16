@@ -16,6 +16,7 @@ import { cn } from "@/lib/utils";
 import { Certificate, CertificateType, Company, CustomField } from "@/types";
 import { router, useForm } from "@inertiajs/react";
 import JoditEditor from "jodit-react";
+import moment from "moment";
 import { FormEvent, useEffect, useRef, useState } from "react";
 import "react-quill/dist/quill.snow.css";
 import { toast } from "sonner";
@@ -73,7 +74,7 @@ const CreateCertificateType = ({
         ref_no: certificate.ref_no,
         witness: certificate.witness,
         issuedAt: certificate.issuedAt.toString(),
-        expireAt: certificate.expireAt.toString(),
+        expireAt: certificate.expireAt?.toString() ?? "",
         certificate_type_id: certificate.certificate_type_id.toString(),
         customFields: [],
         image: null,
@@ -247,7 +248,7 @@ const CreateCertificateType = ({
                             <Label>Issued At</Label>
                             <Input
                                 type="date"
-                                value={data.issuedAt}
+                                value={moment(data.issuedAt).format("Y-MM-DD")}
                                 onChange={(e) =>
                                     setData("issuedAt", e.target.value)
                                 }
@@ -258,7 +259,7 @@ const CreateCertificateType = ({
                             <Label>Expires At</Label>
                             <Input
                                 type="date"
-                                value={data.expireAt}
+                                value={moment(data.expireAt).format("Y-MM-DD")}
                                 onChange={(e) =>
                                     setData("expireAt", e.target.value)
                                 }
