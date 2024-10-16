@@ -8,14 +8,15 @@
     <meta name="viewport" content="width=device-width, initial-scale=1">
 
     <title>Doc</title>
-
-    <!-- Fonts -->
-    {{-- <script src="https://cdn.tailwindcss.com"></script> --}}
     <style>
         * {
-            font-size: 14px;
+
             margin: 0;
             font-family: Arial, Helvetica, sans-serif;
+        }
+
+        p {
+            font-size: 14px;
         }
 
         @page {
@@ -27,6 +28,7 @@
             margin: 0.5cm 0;
             text-align: justify;
         }
+
 
         #header,
         #footer {
@@ -83,15 +85,6 @@
             /* General settings */
             color: #374151;
             /* max-width: 65ch; */
-            /* Headings */
-            /* Paragraphs */
-            /* Links */
-            /* Blockquotes */
-            /* Lists */
-            /* Code */
-            /* Images */
-            /* Tables */
-            /* Horizontal rules */
         }
 
         .prose h1 {
@@ -266,18 +259,20 @@
                         </div>
                     </td>
                     <td style="">
-                        <img style="float: right; margin-bottom: 30px" src="{{ public_path('foot.png') }}"
-                            width="300px" class="h-12" alt="">
+                        <img style="float: right; margin-bottom: 30px; bottom: 25px; position: relative;"
+                            src="{{ public_path('foot.png') }}" width="300px" class="h-12" alt="">
                     </td>
                 </tr>
             </tbody>
         </table>
     </div>
-    @foreach ($certificate->customFields as $item)
-        @if ($item->type == 'custom')
-            <div class="customTable prose">{!! $provider::formatStringCertificate($item->value, $certificate) !!}</div>
-        @endif
-    @endforeach
+    <div style="float: clear">
+        @foreach ($certificate->customFields as $item)
+            @if ($item->type == 'custom')
+                <div class="customTable prose">{!! $provider::formatStringCertificate($item->value, $certificate) !!}</div>
+            @endif
+        @endforeach
+    </div>
 
 </body>
 

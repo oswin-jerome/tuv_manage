@@ -13,9 +13,13 @@
     {{-- <script src="https://cdn.tailwindcss.com"></script> --}}
     <style>
         * {
-            font-size: 14px;
+            /* font-size: 14px; */
             margin: 0;
             font-family: Arial, Helvetica, sans-serif;
+        }
+
+        p {
+            font-size: 14px;
         }
 
         @page {
@@ -278,11 +282,13 @@
     <p>Presented to,</p>
     <p style="font-weight: 700">{{ $certificate->certifier_name }}</p>
     <br> --}}
-    @foreach ($certificate->customFields as $item)
-        @if ($item->type == 'custom')
-            <div class="customTable prose">{!! $provider::formatStringCertificate($item->value, $certificate) !!}</div>
-        @endif
-    @endforeach
+    <div style="float: clear;">
+        @foreach ($certificate->customFields as $item)
+            @if ($item->type == 'custom')
+                <div class="customTable prose">{!! $provider::formatStringCertificate($item->value, $certificate) !!}</div>
+            @endif
+        @endforeach
+    </div>
 
 </body>
 
