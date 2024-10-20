@@ -127,6 +127,14 @@ export default function EmployeeList({
                                 </Select>
                             </div>
                             <div>
+                                <Label>Issued Date</Label>
+                                <Input
+                                    type="date"
+                                    defaultValue={request.issuedAt ?? ""}
+                                    name="issuedAt"
+                                />
+                            </div>
+                            <div>
                                 <Button>Search</Button>
                             </div>
                         </form>

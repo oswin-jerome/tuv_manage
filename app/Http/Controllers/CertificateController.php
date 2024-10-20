@@ -48,6 +48,10 @@ class CertificateController extends Controller
             $certificates = $certificates->where("company_id", $request->get("company_id"));
         }
 
+        if ($request->has("issuedAt") && $request->get("issuedAt") != "0" && $request->get("issuedAt") != "") {
+            $certificates = $certificates->where("issuedAt", $request->get("issuedAt"));
+        }
+
         $certificates = $certificates->orderBy("created_at", "DESC");
         $certificates
             = $certificates->paginate(10);

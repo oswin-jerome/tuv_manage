@@ -237,6 +237,7 @@ const CreateCertificateType = ({
                                 <Label>Default Value</Label>
                                 {data.type == "text" && (
                                     <Input
+                                        defaultValue={data.default_value}
                                         value={data.default_value}
                                         onChange={(e) => {
                                             setData(
