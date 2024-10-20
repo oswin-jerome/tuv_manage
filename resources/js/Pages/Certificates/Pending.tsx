@@ -40,7 +40,9 @@ export default function EmployeeList({
                             <Table>
                                 <TableHeader>
                                     <TableRow>
-                                        <TableHead>Name</TableHead>
+                                        <TableHead>
+                                            Certifier / Equipment Name
+                                        </TableHead>
                                         <TableHead>Company</TableHead>
                                         <TableHead>Expire</TableHead>
                                         <TableHead>Approved</TableHead>
