@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers;
 
+use App\Exports\CertificatesExport;
 use App\Http\Requests\StoreCertificateRequest;
 use App\Http\Requests\UpdateCertificateRequest;
 use App\Http\Resources\CertificateResource;
@@ -17,6 +18,7 @@ use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\DB;
 use Inertia\Inertia;
 use Knp\Snappy\Pdf as SnappyPdf;
+use Maatwebsite\Excel\Facades\Excel;
 use SimpleSoftwareIO\QrCode\Facades\QrCode;
 use Spatie\LaravelPdf\Facades\Pdf as FacadesPdf;
 
@@ -64,6 +66,41 @@ class CertificateController extends Controller
             "companies" => Company::all(["id", "name"]),
             "request" => $request
         ]);
+    }
+
+    /**
+     * Export a listing of the resource.
+     */
+    public function export(Request $request)
+    {
+
+
+        /** @var User */
+        $user = Auth::user();
+
+        $isAdmin = $user->hasRole("admin");
+        $certificates = Certificate::with("certificateType", "company");
+
+        if ($request->has("ref_no") && $request->get("ref_no") != "") {
+            $certificates = $certificates->where("ref_no", "like", "%" . $request->get("ref_no") . "%");
+        }
+        if ($request->has("certificate_type_id") && $request->get("certificate_type_id") != "0" && $request->get("certificate_type_id") != "") {
+            $certificates = $certificates->where("certificate_type_id", $request->get("certificate_type_id"));
+        }
+        if ($request->has("company_id") && $request->get("company_id") != "0" && $request->get("company_id") != "") {
+            $certificates = $certificates->where("company_id", $request->get("company_id"));
+        }
+
+        if ($request->has("issuedAt") && $request->get("issuedAt") != "0" && $request->get("issuedAt") != "") {
+            $certificates = $certificates->where("issuedAt", $request->get("issuedAt"));
+        }
+
+
+        $certificates = $certificates->orderBy("created_at", "DESC");
+        $export = new CertificatesExport($certificates->get());
+
+
+        return Excel::download($export, 'invoices.xlsx', null);
     }
 
     /**

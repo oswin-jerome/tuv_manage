@@ -59,9 +59,20 @@ export default function EmployeeList({
                                     Certificates
                                 </h1>
                             </div>
-                            <Link href={route("certificates.create")}>
-                                <Button>AddNew</Button>
-                            </Link>
+                            <div className="flex gap-2">
+                                <a
+                                    href={route("certificates.export", {
+                                        _query: {
+                                            ...request,
+                                        },
+                                    })}
+                                >
+                                    <Button>Export</Button>
+                                </a>
+                                <Link href={route("certificates.create")}>
+                                    <Button>AddNew</Button>
+                                </Link>
+                            </div>
                         </div>
                         <form
                             action=""
