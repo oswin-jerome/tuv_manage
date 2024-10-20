@@ -254,11 +254,11 @@
                 </tr>
             </thead>
         </table>
-        <hr style="margin-top: 00px; color:#e9071e74" />
+        <hr style="margin-top: 00px; color:#e9071ece" />
     </div>
     {{-- Footer --}}
     <div style="position:fixed;bottom:0.8em;left:1em;right:1em;padding-top: 4px; font-size: 12px">
-        <hr style="margin-bottom: 10px; color:#e9071e74" />
+        <hr style="margin-bottom: 10px; color:#e9071ece" />
 
         <table style="width: 100%;">
             <tbody>

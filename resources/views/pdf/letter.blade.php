@@ -265,10 +265,10 @@
                 </tr>
             </thead>
         </table>
-        <hr style="margin-top: 00px; color:#E9071C" />
+        <hr style="margin-top: 00px; color:#e9071ece" />
     </div>
     <div style="position:fixed;bottom:1em;left:1em;right:1em;padding-top: 4px;">
-        <hr style="margin-bottom: 10px; color:#E9071C" />
+        <hr style="margin-bottom: 10px; color:#e9071ece" />
 
         <table style="width: 100%;">
             <tbody>
