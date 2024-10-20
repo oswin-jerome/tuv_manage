@@ -242,10 +242,14 @@
                     <div style="width: 215px; position: absolute; top:2em; right:2em">
                         <table>
                             <tr>
-                                <td style="width: 100px"><img
-                                        style="width: 100px;border: 4px solid #064463;margin-right:8px;"
-                                        src="{{ $certificate->image }}" alt="">
-                                </td>
+                                @if ($certificate->image)
+                                    <td style="width: 100px"><img
+                                            style="width: 100px;border: 4px solid #064463;margin-right:8px;"
+                                            src="{{ $certificate->image }}" alt="">
+                                    </td>
+                                @else
+                                    <td style="width: 100px"></td>
+                                @endif
                                 <td><img style="width: 100px" src="data:image/png;base64, {!! $qr !!}"
                                         alt="">
                                     <p style="margin-top: 4px; text-align: center">Scan to verify</p>
@@ -266,6 +270,7 @@
                 <tr>
                     <td>
                         <div class="text-sm" style="">
+                            <h1 style="margin-bottom: 8px;color:#064463"><span>TUV</span> Experts</h1>
                             {{-- <p>TEL+966-565463773 & 0565461187</p> --}}
                             <p>Email: operations@tuv-experts.com</p>
                             <p>Web : www.tuv-experts.com</p>
@@ -273,7 +278,7 @@
                     </td>
                     <td style="">
                         <img style="float: right; margin-bottom: 10px" src="{{ public_path('logo.png') }}"
-                            width="150px" class="h-12" alt="">
+                            width="160px" class="h-12" alt="">
                     </td>
                 </tr>
             </tbody>
