@@ -16,7 +16,7 @@ Route::get('/validate', function (Request $request) {
     ]);
 
 
-    $certificate = Certificate::where("ref_no", $request->get("ref_no"))->first();
+    $certificate = Certificate::with("company:name,id")->where("ref_no", $request->get("ref_no"))->first();
 
     if ($certificate == null) {
         return response()->json([

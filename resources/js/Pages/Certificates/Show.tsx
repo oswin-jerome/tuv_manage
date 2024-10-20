@@ -70,7 +70,7 @@ const Show = ({ certificate }: { certificate: Certificate }) => {
                     </CardHeader>
                     <CardContent className="grid grid-cols-2 gap-4">
                         <div>
-                            <Label>Name</Label>
+                            <Label>Certifier / Equipment Name</Label>
                             <Input
                                 value={certificate.certifier_name}
                                 readOnly

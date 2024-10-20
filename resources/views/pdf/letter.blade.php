@@ -264,9 +264,9 @@
                 <tr>
                     <td>
                         <div class="text-sm" style="">
-                            <p>TEL+966-565463773 & 0565461187</p>
+                            {{-- <p>TEL+966-565463773 & 0565461187</p> --}}
                             <p>Email: operations@tuv-experts.com</p>
-                            <p>Web : www-tuv-experts.com</p>
+                            <p>Web : www.tuv-experts.com</p>
                         </div>
                     </td>
                     <td style="">

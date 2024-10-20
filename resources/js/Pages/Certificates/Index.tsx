@@ -139,7 +139,9 @@ export default function EmployeeList({
                                 </TableCaption>
                                 <TableHeader>
                                     <TableRow>
-                                        <TableHead>Name</TableHead>
+                                        <TableHead>
+                                            Certifier / Equipment Name
+                                        </TableHead>
                                         <TableHead>Ref #</TableHead>
                                         <TableHead>Company</TableHead>
                                         <TableHead>Type</TableHead>

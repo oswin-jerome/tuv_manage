@@ -221,7 +221,7 @@
 </head>
 
 <body class="" style="padding: 2em">
-    <table style="width: 100%">
+    <table style="width: 100%;">
         <thead>
             <tr>
                 <td>
@@ -231,10 +231,15 @@
                     <div style="width: 215px; position: absolute; top:2em; right:2em">
                         <table>
                             <tr>
-                                <td style="width: 100px"><img
-                                        style="width: 100px;border: 4px solid #064463;margin-right:8px;"
-                                        src="{{ $certificate->image }}" alt="">
-                                </td>
+                                @if ($certificate->image)
+                                    <td style="width: 100px"><img
+                                            style="width: 100px;border: 4px solid #064463;margin-right:8px;"
+                                            src="{{ $certificate->image }}" alt="">
+                                    </td>
+                                @else
+                                    <td style="width: 100px"></td>
+                                @endif
+
                                 <td><img style="width: 100px" src="data:image/png;base64, {!! $qr !!}"
                                         alt="">
                                     <p style="margin-top: 4px; text-align: center">Scan to verify</p>
@@ -246,21 +251,23 @@
             </tr>
         </thead>
     </table>
+    <hr style="margin-top: 40px; color:#E9071C" />
     <br>
-    <div style="position:fixed;bottom:2em;left:1em;right:1em">
+    <div style="position:fixed;bottom:0.8em;left:1em;right:1em; border-top:2px solid #E9071C;padding-top: 4px;">
         <table style="width: 100%;">
             <tbody>
                 <tr>
-                    <td>
+                    <td style="width: 40%">
                         <div class="text-sm" style="">
-                            <p>TEL+966-565463773 & 0565461187</p>
+                            <h1 style="margin-bottom: 8px;color:#064463"><span>TUV</span> Experts</h1>
+                            {{-- <p>TEL+966-565463773 & 0565461187</p> --}}
                             <p>Email: operations@tuv-experts.com</p>
-                            <p>Web : www-tuv-experts.com</p>
+                            <p>Web : www.tuv-experts.com</p>
                         </div>
                     </td>
-                    <td style="">
-                        <img style="float: right; margin-bottom: 30px; bottom: 25px; position: relative;"
-                            src="{{ public_path('foot.png') }}" width="300px" class="h-12" alt="">
+                    <td style="width: 60%">
+                        <img style=" margin:auto;position: relative;width: 100%;" src="{{ public_path('foot2.jpg') }}"
+                            class="h-12" alt="">
                     </td>
                 </tr>
             </tbody>

@@ -148,7 +148,7 @@ const CreateCertificateType = ({
                             <InputError message={errors.certificate_type_id} />
                         </div>
                         <div>
-                            <Label>Certifier Name</Label>
+                            <Label>Certifier / Equipment Name</Label>
                             <Input
                                 value={data.certifier_name}
                                 onChange={(e) =>
@@ -159,13 +159,13 @@ const CreateCertificateType = ({
                         </div>
                         <div>
                             <Label>Photo</Label>
-                            {/* <Input
+                            <Input
                                 type="file"
                                 onChange={(e) =>
                                     setData("image", e.target.files?.item(0))
                                 }
                             />
-                            <InputError message={errors.image} /> */}
+                            <InputError message={errors.image} />
                         </div>
                         <div>
                             <Label>Certificate Name</Label>

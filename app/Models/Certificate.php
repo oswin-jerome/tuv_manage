@@ -44,10 +44,14 @@ class Certificate extends Model implements HasMedia
 
         return Carbon::parse($this->expireAt)->isBefore(Carbon::now());
     }
+
     public function getCanDeleteAttribute()
     {
         /** @var User */
         $user = FacadesAuth::user();
+        if ($user == null) {
+            return false;
+        }
         $isAdmin = $user->hasRole("admin");
         if ($isAdmin) {
             return true;
@@ -65,13 +69,16 @@ class Certificate extends Model implements HasMedia
     {
         /** @var User */
         $user = FacadesAuth::user();
+        if ($user == null) {
+            return false;
+        }
         $isAdmin = $user->hasRole("admin");
 
         if ($this->creator_id != $user->id && !$isAdmin) {
             return "Certificate don't belong to you";
         }
 
-        if ($this->approval_status != "pending" && Carbon::parse($this->issued_at)->addDays(15)->isBefore(Carbon::now())) {
+        if ($this->approval_status != "pending" && Carbon::parse($this->issuedAt)->diffInDays(Carbon::now()) > 15) {
 
             return "Certificate is already approved/rejected";
         }

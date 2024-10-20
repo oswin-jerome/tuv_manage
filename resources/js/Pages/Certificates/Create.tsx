@@ -132,7 +132,7 @@ const CreateCertificateType = ({
                             <InputError message={errors.certificate_type_id} />
                         </div>
                         <div>
-                            <Label>Certifier Name</Label>
+                            <Label>Certifier / Equipment Name</Label>
                             <Input
                                 value={data.certifier_name}
                                 onChange={(e) =>

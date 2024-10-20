@@ -180,7 +180,7 @@ class CertificateController extends Controller
                 "*" => "Certificate don't belong to you"
             ]);
         }
-        if ($certificate->approval_status != "pending" && Carbon::parse($certificate->issued_at)->addDays(15)->isBefore(Carbon::now())) {
+        if ($certificate->approval_status != "pending" && Carbon::parse($certificate->issuedAt)->diffInDays(Carbon::now()) > 15) {
 
             return back()->withErrors([
                 "*" => "Certificate is already approved/rejected"
