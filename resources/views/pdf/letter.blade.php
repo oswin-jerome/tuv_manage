@@ -257,8 +257,10 @@
             </tr>
         </thead>
     </table>
+    <hr style="margin-top: 40px; color:#E9071C" />
+
     <br>
-    <div style="position:fixed;bottom:1em;left:1em;right:1em">
+    <div style="position:fixed;bottom:1em;left:1em;right:1em;border-top:2px solid #E9071C;padding-top: 4px;">
         <table style="width: 100%;">
             <tbody>
                 <tr>
