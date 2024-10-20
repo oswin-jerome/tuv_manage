@@ -28,7 +28,9 @@
 
         body {
             font-family: sans-serif;
-            margin: 0.5cm 0;
+            margin: 0.2cm 0;
+            margin-bottom: 1.8cm;
+            margin-top: 80px;
             text-align: justify;
         }
 
@@ -232,39 +234,42 @@
 </head>
 
 <body class="" style="padding: 2em">
-    <table style="width: 100%">
-        <thead>
+    <img src="{{ public_path('logo.png') }}"
+        style="position: fixed; opacity: 0.05; top:50%;right:50% ; transform: translate(50%,-50%)" alt="">
+
+    {{-- QR AND IMAGE --}}
+    <div style="width: 215px; top:5px; right:0em; position: absolute;">
+        <table>
             <tr>
-                <td>
-                    <img src="{{ public_path('logo.png') }}" width="150px" class="h-16" alt="">
-                </td>
-                <td>
-                    <div style="width: 215px; position: absolute; top:2em; right:2em">
-                        <table>
-                            <tr>
-                                @if ($certificate->image)
-                                    <td style="width: 100px"><img
-                                            style="width: 100px;border: 4px solid #064463;margin-right:8px;"
-                                            src="{{ $certificate->image }}" alt="">
-                                    </td>
-                                @else
-                                    <td style="width: 100px"></td>
-                                @endif
-                                <td><img style="width: 100px" src="data:image/png;base64, {!! $qr !!}"
-                                        alt="">
-                                    <p style="margin-top: 4px; text-align: center">Scan to verify</p>
-                                </td>
-                            </tr>
-                        </table>
-                    </div>
+                @if ($certificate->image)
+                    <td style="width: 80px"><img style="width: 80px;border: 4px solid #064463;margin-right:8px;"
+                            src="{{ $certificate->image }}" alt="">
+                    </td>
+                @else
+                    <td style="width: 80px;"></td>
+                @endif
+                <td><img style="width: 80px" src="data:image/png;base64, {!! $qr !!}" alt="">
+                    <p style="margin-top: 4px; text-align: center">Scan to verify</p>
                 </td>
             </tr>
-        </thead>
-    </table>
-    <hr style="margin-top: 40px; color:#E9071C" />
+        </table>
+    </div>
+    {{-- HEader --}}
+    <div style="position: fixed;left:0;right:0;top:0; height: 120px; padding: 10px 1em; ">
+        <table style="width: 100%;">
+            <thead>
+                <tr>
+                    <td style="width: 50%; padding:20px">
+                        <img src="{{ public_path('logo.png') }}" width="120px" class="h-16" alt="">
+                    </td>
+                </tr>
+            </thead>
+        </table>
+        <hr style="margin-top: 00px; color:#E9071C" />
+    </div>
+    <div style="position:fixed;bottom:1em;left:1em;right:1em;padding-top: 4px;">
+        <hr style="margin-bottom: 10px; color:#E9071C" />
 
-    <br>
-    <div style="position:fixed;bottom:1em;left:1em;right:1em;border-top:2px solid #E9071C;padding-top: 4px;">
         <table style="width: 100%;">
             <tbody>
                 <tr>
@@ -272,8 +277,9 @@
                         <div class="text-sm" style="">
                             <h1 style="margin-bottom: 8px;color:#064463"><span>TUV</span> Experts</h1>
                             {{-- <p>TEL+966-565463773 & 0565461187</p> --}}
-                            <p>Email: operations@tuv-experts.com</p>
-                            <p>Web : www.tuv-experts.com</p>
+                            <p style="font-size: 12px">CR #: 1009060888</p>
+                            <p style="font-size: 12px">Email: operations@tuv-experts.com | info@tuv-experts.com </p>
+                            <p style="font-size: 12px">Web : www.tuv-experts.com</p>
                         </div>
                     </td>
                     <td style="">

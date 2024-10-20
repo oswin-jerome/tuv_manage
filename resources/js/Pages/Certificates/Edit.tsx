@@ -65,6 +65,7 @@ const CreateCertificateType = ({
         certificate_type_id: string;
         customFields: CustomField[];
         image: File | null | undefined;
+        _method: "PUT";
     }>({
         certifier_name: certificate.certifier_name,
         certificate_name: certificate.certificate_name,
@@ -78,6 +79,7 @@ const CreateCertificateType = ({
         certificate_type_id: certificate.certificate_type_id.toString(),
         customFields: [],
         image: null,
+        _method: "PUT",
     });
 
     const handleSubmit = (e: FormEvent) => {
@@ -92,6 +94,7 @@ const CreateCertificateType = ({
             onSuccess: (e) => {
                 toast.warning("Updated!!!");
                 // reset();
+                router.reload();
             },
             onError: (errs) => {
                 if (errs["*"]) {
@@ -324,7 +327,7 @@ const CreateCertificateType = ({
                                             </Button>
                                         </div>
 
-                                        <div>
+                                        <div className="prose max-w-full list-disc">
                                             {val.type == "text" && (
                                                 <Textarea
                                                     key={val + "input"}
