@@ -68,12 +68,12 @@
 
     <div style="padding: 2em">
         <img src="{{ public_path('logo.png') }}"
-            style="position: absolute; top: 0;
-		bottom: 0;left:0; opacity: 0.05; height: 100%; right:0; width: 100%; object-fit: cover"
+            style="position: fixed; top: 50%;
+	 opacity: 0.1; right:50%; width: 60%; transform: translate(50%,-50%); object-fit: cover"
             alt="">
         <table style="width: 100%">
             <tr>
-                <td>
+                <td style="width: 30%">
                     <img src="{{ public_path('logo.png') }}" style="width: 200px" alt="">
                 </td>
                 <td style="text-align: center;font-size: 2.3em">
@@ -88,7 +88,7 @@
                 </td>
             </tr>
         </table>
-        <table style="width: 100%; margin-top: 82px; font-size: 2em">
+        <table style="width: 100%; margin-top: 62px; font-size: 2em">
             <tr>
                 <td class="ctd">
                     <h3>Name</h3>
@@ -108,7 +108,7 @@
                 </td>
             </tr>
             <tr>
-                <td style="padding: 20px;"></td>
+                <td style="padding: 16px;"></td>
             </tr>
             <tr>
                 <td class="ctd">
@@ -127,23 +127,31 @@
 
             </tr>
             <tr>
-                <td style="padding: 20px;"></td>
+                <td style="padding: 16px;"></td>
             </tr>
             <tr>
+
+                <td class="ctd">
+                    <h3>Certification</h3>
+                    <p>{{ $certificate->certificate_name }}</p>
+                </td>
                 <td class="ctd">
                     <h3>Company</h3>
                     <p>{{ $certificate->company->name }}</p>
                 </td>
             </tr>
         </table>
-        <table style="width: 100%;margin-top: 20px">
+        <table
+            style="position: absolute; bottom: 1em; left: 2em; right: 2em;width: 100%; transform: translate(0%,-100%)">
             <tr>
-                <td>
-                    <p style="font-size: 1.3em;color: #064463">operations@tuv-experts.com</p>
-                    <p style="font-size: 1.3em;color: #064463">www.tuv-experts.com</p>
+                <td style="width: 40%">
+                    <p style="font-size: 1em;margin-bottom:2px; color: #064463">operations@tuv-experts.com</p>
+                    <p style="font-size: 1em;margin-bottom:2px; color: #064463">www.tuv-experts.com</p>
+                    {{-- <p style="font-size: 1em;margin-bottom:2px; color: #064463">+966-565463773 | +966-565461187</p> --}}
+
                 </td>
-                <td>
-                    <img src="foot.png" width="400px" alt="">
+                <td style="width: 40%">
+                    <img src="foot2.jpg" width="89%" alt="">
                 </td>
             </tr>
         </table>
@@ -151,27 +159,17 @@
     <div class="page-break"> </div>
     <div style="padding: 2em">
         <img src="{{ public_path('logo.png') }}"
-            style="position: absolute; top: 0;
-		bottom: 0;left:0; opacity: 0.05; height: 100%; right:0; width: 100%; object-fit: cover"
+            style="position: fixed; top: 50%;
+	 opacity: 0.1; right:50%; width: 60%; transform: translate(50%,-50%); object-fit: cover"
             alt="">
         <img src="{{ public_path('logo.png') }}" style="width: 200px; position: absolute; top:2em; left:2em"
             alt="">
-        <div style="width: 200px; position: absolute; top:2em; right:2em">
-            <img src="data:image/png;base64, {!! $qr !!}" alt="">
+        <div style="width: 130px; position: absolute; top:2em; right:2em">
+            <img style="width: 100%" src="data:image/png;base64, {!! $qr !!}" alt="">
             <p style="margin-top: 4px; text-align: center">Scan to verify</p>
         </div>
-        <table style="width: 60%; margin-top: 120px">
-            <tr>
-                <td class="ctd">
-                    <h3>Certification</h3>
-                    <p>{{ $certificate->certificate_name }}</p>
-                </td>
-            </tr>
-            <tr>
-                <td style="padding: 10px;"></td>
-            </tr>
-        </table>
-        <table style="width: 100%">
+
+        <table style="width: 100%; margin-top: 120px">
             <tr>
                 <td>
                     <table style="width: 100%">
@@ -209,20 +207,7 @@
             @endif
         @endforeach
 
-        <div style="position: absolute;left:16px;right:16px; bottom: 12px; color: #064463">
-            <table style="width: 100%">
-                <tr>
-                    <td>
-                        <img src="{{ public_path('logo.png') }}" style="width: 100px" alt="">
-                    </td>
-                    <td style="text-align: right">
-                        <p>+966-565463773</p>
-                        <p>+966-565461187</p>
-                    </td>
-                </tr>
-            </table>
 
-        </div>
 
     </div>
 

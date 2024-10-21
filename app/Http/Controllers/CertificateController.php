@@ -100,7 +100,7 @@ class CertificateController extends Controller
         $export = new CertificatesExport($certificates->get());
 
 
-        return Excel::download($export, 'invoices.xlsx', null);
+        return Excel::download($export, 'Export.xlsx', null);
     }
 
     /**
