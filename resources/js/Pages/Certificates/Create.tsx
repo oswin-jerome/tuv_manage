@@ -56,7 +56,7 @@ const CreateCertificateType = ({
         certificate_name: "",
         iqama: "",
         company_id: "",
-        project: "",
+        project: "Not Applicable",
         witness: "",
         issuedAt: "",
         expireAt: "",

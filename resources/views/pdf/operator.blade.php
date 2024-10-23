@@ -132,10 +132,6 @@
             <tr>
 
                 <td class="ctd">
-                    <h3>Certification</h3>
-                    <p>{{ $certificate->certificate_name }}</p>
-                </td>
-                <td class="ctd">
                     <h3>Company</h3>
                     <p>{{ $certificate->company->name }}</p>
                 </td>

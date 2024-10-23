@@ -18,6 +18,7 @@ class RenderService
 		$string = str_replace("{{WITNESS}}", $certificate->witness, $string);
 		$string = str_replace("{{IQAMA}}", $certificate->iqama, $string);
 		$string = str_replace("{{COMPANY_NAME}}", $certificate->company->name, $string);
+		$string = str_replace("{{CERTIFICATE_NAME}}", $certificate->certificate_name, $string);
 		if ($certificate->expireAt != null) {
 			$string = str_replace("{{EXPIRE_AT}}", $certificate->expireAt->format('d / m / Y'), $string);
 		} else {
