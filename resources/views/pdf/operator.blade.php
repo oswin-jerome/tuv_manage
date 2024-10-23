@@ -1,3 +1,4 @@
+@inject('provider', 'App\Http\Services\RenderService')
 <!DOCTYPE html>
 <html lang="en">
 
@@ -199,7 +200,7 @@
         </table>
         @foreach ($certificate->customFields as $item)
             @if ($item->type == 'custom')
-                <div class="customTable" style="margin-top: 30px; color:#064463">{!! $item->value !!}</div>
+                <div class="customTable" style="margin-top: 30px; color:#064463">{!! $provider::formatStringCertificate($item->value, $certificate) !!}</div>
             @endif
         @endforeach
 
