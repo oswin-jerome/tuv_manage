@@ -83,9 +83,11 @@
                     <h2 style="margin-top: 10px;color:#000; font-size: 0.7em">Ref # : {{ $certificate->ref_no }}</h2>
                 </td>
                 <td>
-                    <img src="{{ $certificate->image }}"
-                        style="position: absolute;right: 1em;top:1em;border: 4px solid #000; object-fit: cover;"
-                        height="170px" alt="">
+                    <div style="position: absolute;right: 2em;">
+                        {{-- <img style="border: 4px solid #000; object-fit: cover;" src="{{ $certificate->image }}"
+                            height="150px" width="130px" alt=""> --}}
+                        <img style="height:150px" src="data:image/png;base64, {!! $qr !!}" alt="">
+                    </div>
                 </td>
             </tr>
         </table>
@@ -154,26 +156,20 @@
         </table>
     </div>
     <div class="page-break"> </div>
-    <div style="padding: 2em">
+    <div style="padding: 1em 2em">
         <img src="{{ public_path('logo.png') }}"
             style="position: fixed; top: 50%;
 	 opacity: 0.2; right:50%; width: 60%; transform: translate(50%,-50%); object-fit: cover"
             alt="">
-        <img src="{{ public_path('logo.png') }}" style="width: 200px; position: absolute; top:2em; left:2em"
-            alt="">
-        <div style="width: 130px; position: absolute; top:2em; right:2em">
-            <img style="width: 100%" src="data:image/png;base64, {!! $qr !!}" alt="">
-            <p style="margin-top: 4px; text-align: center">Scan to verify</p>
-        </div>
 
-        <table style="width: 100%; margin-top: 120px">
+        <table style="width: 100%; margin-top: 0px;">
             <tr>
                 <td>
-                    <table style="width: 100%">
+                    <table style="width: 100%;">
                         @foreach ($certificate->customFields as $key => $item)
                             @if ($item->type != 'custom' && $key % 2 != 0)
                                 <tr>
-                                    <td class="ctd" style="padding: 10px 0px">
+                                    <td class="ctd" style="padding: 0px 0px; text-align: left">
                                         <h3>{{ $item->label }}</h3>
                                         <p>{{ $item->value }}</p>
                                     </td>
@@ -187,7 +183,7 @@
                         @foreach ($certificate->customFields as $key => $item)
                             @if ($item->type != 'custom' && $key % 2 == 0)
                                 <tr>
-                                    <td class="ctd" style="padding: 10px 0px">
+                                    <td class="ctd" style="padding: 0px 0px">
                                         <h3>{{ $item->label }}</h3>
                                         <p>{{ $item->value }}</p>
                                     </td>
@@ -200,7 +196,7 @@
         </table>
         @foreach ($certificate->customFields as $item)
             @if ($item->type == 'custom')
-                <div class="customTable" style="margin-top: 30px; color:#000">{!! $provider::formatStringCertificate($item->value, $certificate) !!}</div>
+                <div class="customTable" style="margin-top: 15px; color:#000">{!! $provider::formatStringCertificate($item->value, $certificate) !!}</div>
             @endif
         @endforeach
 

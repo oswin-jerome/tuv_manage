@@ -318,6 +318,15 @@ class CertificateController extends Controller
             return $pdf->stream();
         }
 
+        if ($certificate->certificateType->layout == "card_noback") {
+            $pdf = Pdf::loadView('pdf.card_noback', [
+                "certificate" => $certificate,
+                "customFields" => $data,
+                "qr" => $qr
+
+            ])->setPaper([0, 0, 830, 521], "portrait");
+            return $pdf->stream();
+        }
 
         $pdf = Pdf::loadView('pdf.operator', [
             "certificate" => $certificate,
