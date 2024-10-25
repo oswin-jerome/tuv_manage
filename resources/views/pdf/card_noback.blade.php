@@ -156,7 +156,7 @@
         </table>
     </div>
     <div class="page-break"> </div>
-    <div style="padding: 1em 2em">
+    <div style="padding: 1em 2em;padding-bottom: 1em;">
         <img src="{{ public_path('logo.png') }}"
             style="position: fixed; top: 50%;
 	 opacity: 0.2; right:50%; width: 60%; transform: translate(50%,-50%); object-fit: cover"
