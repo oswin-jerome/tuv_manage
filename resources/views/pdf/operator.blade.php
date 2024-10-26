@@ -75,17 +75,17 @@
         <table style="width: 100%">
             <tr>
                 <td style="width: 30%">
-                    <img src="{{ public_path('logo.png') }}" style="width: 200px" alt="">
+                    <img src="{{ public_path('logo.png') }}" style="width: 250px" alt="">
                 </td>
                 <td style="text-align: center;font-size: 2.3em">
-                    <h1 style="text-align: center;font-size: 1em;color:#E9071C">
+                    <h1 style="text-align: center;font-size: 1em;color:#000">
                         {{ $certificate->certificate_name }}</h1>
                     <h2 style="margin-top: 10px;color:#000; font-size: 0.7em">Ref # : {{ $certificate->ref_no }}</h2>
                 </td>
                 <td>
                     <img src="{{ $certificate->image }}"
                         style="position: absolute;right: 1em;top:1em;border: 4px solid #000; object-fit: cover;"
-                        height="170px" alt="">
+                        height="200px" alt="">
                 </td>
             </tr>
         </table>

@@ -93,7 +93,7 @@ class Certificate extends Model implements HasMedia
     {
         $this
             ->addMediaConversion('thumb')
-            ->fit(Fit::Crop, 270, 300)
+            ->fit(Fit::Crop, 350, 300)
             ->nonQueued();
     }
 
