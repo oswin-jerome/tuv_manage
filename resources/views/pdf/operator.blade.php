@@ -159,7 +159,7 @@
             style="position: fixed; top: 50%;
 	 opacity: 0.2; right:50%; width: 60%; transform: translate(50%,-50%); object-fit: cover"
             alt="">
-        <img src="{{ public_path('logo.png') }}" style="width: 200px; position: absolute; top:2em; left:2em"
+        <img src="{{ public_path('logo.png') }}" style="width: 250px; position: absolute; top:2em; left:2em"
             alt="">
         <div style="width: 130px; position: absolute; top:2em; right:2em">
             <img style="width: 100%" src="data:image/png;base64, {!! $qr !!}" alt="">

@@ -83,15 +83,14 @@
                     <h2 style="margin-top: 10px;color:#000; font-size: 0.7em">Ref # : {{ $certificate->ref_no }}</h2>
                 </td>
                 <td>
-                    <div style="position: absolute;right: 2em;">
-                        {{-- <img style="border: 4px solid #000; object-fit: cover;" src="{{ $certificate->image }}"
-                            height="150px" width="130px" alt=""> --}}
-                        <img style="height:150px" src="data:image/png;base64, {!! $qr !!}" alt="">
-                    </div>
+                    <img src="{{ $certificate->image }}"
+                        style="position: absolute;right: 1em;top:1em;border: 4px solid #000; object-fit: cover;"
+                        height="200px" alt="">
+
                 </td>
             </tr>
         </table>
-        <table style="width: 100%; margin-top: 62px; font-size: 2em">
+        <table style="width: 100%; margin-top: 52px; font-size: 2em">
             <tr>
                 <td class="ctd">
                     <h3>Name</h3>
@@ -143,11 +142,14 @@
         <table
             style="position: absolute; bottom: 1em; left: 2em; right: 2em;width: 100%; transform: translate(0%,-100%)">
             <tr>
-                <td style="width: 40%">
+                <td style="width: 30%">
                     <p style="font-size: 1.2em;margin-bottom:2px; color: #000">operations@tuv-experts.com</p>
                     <p style="font-size: 1.2em;margin-bottom:2px; color: #000">www.tuv-experts.com</p>
                     {{-- <p style="font-size: 1em;margin-bottom:2px; color: #000">+966-565463773 | +966-565461187</p> --}}
-
+                </td>
+                <td>
+                    <img style="height:100px" src="data:image/png;base64, {!! $qr !!}" alt="">
+                    <p style="text-align: center; font-size: 16px">Scan to verify</p>
                 </td>
                 <td style="width: 60%">
                     <img src="foot2.jpg" style="" width="89%" alt="">
