@@ -240,20 +240,20 @@ export default function EmployeeList({
                                                     </Link>
                                                     <Link
                                                         as="button"
-                                                        disabled={
-                                                            certificate.editable !=
-                                                            "ALLOWED"
-                                                        }
+                                                        // disabled={
+                                                        //     certificate.editable !=
+                                                        //     "ALLOWED"
+                                                        // }
                                                         href={route(
                                                             "certificates.edit",
                                                             certificate.id
                                                         )}
                                                     >
                                                         <Button
-                                                            disabled={
-                                                                certificate.editable !=
-                                                                "ALLOWED"
-                                                            }
+                                                            // disabled={
+                                                            //     certificate.editable !=
+                                                            //     "ALLOWED"
+                                                            // }
                                                             variant="outline"
                                                             size="icon"
                                                         >
