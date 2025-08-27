@@ -55,8 +55,7 @@ class CertificateController extends Controller
         }
 
         $certificates = $certificates->orderBy("created_at", "DESC");
-        $certificates
-            = $certificates->paginate(10);
+        $certificates = $certificates->paginate(10)->withQueryString();
 
         // return $certificates;
 
