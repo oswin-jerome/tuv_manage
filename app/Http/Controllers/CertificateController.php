@@ -220,19 +220,19 @@ class CertificateController extends Controller
                 "*" => "Certificate don't belong to you"
             ]);
         }
-        if ($certificate->approval_status != "pending" && Carbon::parse($certificate->issuedAt)->diffInDays(Carbon::now()) > 15) {
+        // if ($certificate->approval_status != "pending" && Carbon::parse($certificate->issuedAt)->diffInDays(Carbon::now()) > 15) {
 
-            return back()->withErrors([
-                "*" => "Certificate is already approved/rejected"
-            ]);
-        }
+        //     return back()->withErrors([
+        //         "*" => "Certificate is already approved/rejected"
+        //     ]);
+        // }
 
 
-        if ($certificate->approval_status != "pending" && !$isAdmin) {
-            return back()->withErrors([
-                "*" => "Only Admin can edit certificates after approving"
-            ]);
-        }
+        // if ($certificate->approval_status != "pending" && !$isAdmin) {
+        //     return back()->withErrors([
+        //         "*" => "Only Admin can edit certificates after approving"
+        //     ]);
+        // }
         DB::beginTransaction();
 
         $certificate->update($request->except(["customFields", "image"]));
