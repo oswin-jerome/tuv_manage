@@ -35,6 +35,10 @@ class Certificate extends Model implements HasMedia
     {
         return $this->hasMany(CertificateCustomField::class);
     }
+    public function QrCustomFields()
+    {
+        return $this->hasMany(CertificateCustomField::class)->where("label", "like", "QR_%")->select("label", "value", "certificate_id");
+    }
 
     public function getIsExpiredAttribute()
     {
