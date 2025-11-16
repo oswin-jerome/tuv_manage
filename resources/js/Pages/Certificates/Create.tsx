@@ -319,6 +319,11 @@ const CreateCertificateType = ({
                                             )}
                                             {val.type == "custom" && (
                                                 <JoditEditor
+                                                    config={{
+                                                        style: {
+                                                            fontSize: "12px",
+                                                        },
+                                                    }}
                                                     className="prose max-w-full"
                                                     ref={editor}
                                                     value={val.default_value}

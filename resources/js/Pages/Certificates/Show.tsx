@@ -139,6 +139,9 @@ const Show = ({ certificate }: { certificate: Certificate }) => {
                                         <JoditEditor
                                             config={{
                                                 readonly: true,
+                                                style: {
+                                                    fontSize: "12px",
+                                                },
                                             }}
                                             className="prose max-w-full"
                                             ref={editor}

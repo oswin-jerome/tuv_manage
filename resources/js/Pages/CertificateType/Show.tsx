@@ -261,6 +261,11 @@ const CreateCertificateType = ({
                                                 newContent
                                             );
                                         }}
+                                        config={{
+                                            style: {
+                                                fontSize: "12px",
+                                            },
+                                        }}
                                         onChange={(newContent) => {}}
                                     />
                                 )}

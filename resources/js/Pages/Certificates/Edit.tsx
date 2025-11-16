@@ -347,6 +347,9 @@ const CreateCertificateType = ({
                                                     ref={editor}
                                                     config={{
                                                         inline: true,
+                                                        style: {
+                                                            fontSize: "12px",
+                                                        },
                                                     }}
                                                     value={
                                                         val.value ??
