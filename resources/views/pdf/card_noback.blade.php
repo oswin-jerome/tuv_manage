@@ -168,7 +168,7 @@
             <tr>
                 <td>
                     <table style="width: 100%;">
-                        @foreach ($certificate->customFields as $key => $item)
+                        @foreach ($customFields as $key => $item)
                             @if ($item->type != 'custom' && $key % 2 != 0)
                                 <tr>
                                     <td class="ctd" style="padding: 0px 0px; text-align: left">
@@ -182,7 +182,7 @@
                 </td>
                 <td>
                     <table style="width: 100%">
-                        @foreach ($certificate->customFields as $key => $item)
+                        @foreach ($customFields as $key => $item)
                             @if ($item->type != 'custom' && $key % 2 == 0)
                                 <tr>
                                     <td class="ctd" style="padding: 0px 0px">

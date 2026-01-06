@@ -280,7 +280,7 @@
         </table>
     </div>
     <div style="">
-        @foreach ($certificate->customFields as $item)
+        @foreach ($customFields as $item)
             @if ($item->type == 'custom')
                 <div class="customTable prose">{!! $provider::formatStringCertificate($item->value, $certificate) !!}</div>
             @endif

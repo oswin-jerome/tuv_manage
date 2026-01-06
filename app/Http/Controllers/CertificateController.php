@@ -288,9 +288,14 @@ class CertificateController extends Controller
             return response('Unauthorized.', 401);
         }
         $data = [];
+        $filteredCustom = [];
         foreach ($certificate->customFields as $key => $value) {
-            $data[$value->key] = $value->value;
+            if (!str_starts_with($value->label, "QR_")) {
+                $data[$value->key] = $value->value;
+                $filteredCustom[$key] = $value;
+            }
         }
+
         $qr = "";
         if ($certificate->ref_no != null) {
             $qr  = base64_encode(QrCode::format('svg')->size(200)->errorCorrection('H')->generate(env("VERIFY_URL", "") . "&ref_no=" . $certificate->ref_no));
@@ -302,7 +307,7 @@ class CertificateController extends Controller
         if ($certificate->certificateType->layout == "letter") {
             $pdf = Pdf::loadView('pdf.letter', [
                 "certificate" => $certificate,
-                "customFields" => $data,
+                "customFields" => $filteredCustom,
                 "qr" => $qr
             ])->setPaper("A4");
             return $pdf->stream();
@@ -311,7 +316,7 @@ class CertificateController extends Controller
         if ($certificate->certificateType->layout == "letter_WAH") {
             $pdf = Pdf::loadView('pdf.letter2', [
                 "certificate" => $certificate,
-                "customFields" => $data,
+                "customFields" => $filteredCustom,
                 "qr" => $qr
             ])->setPaper("A4");
             return $pdf->stream();
@@ -320,16 +325,15 @@ class CertificateController extends Controller
         if ($certificate->certificateType->layout == "card_noback") {
             $pdf = Pdf::loadView('pdf.card_noback', [
                 "certificate" => $certificate,
-                "customFields" => $data,
+                "customFields" => $filteredCustom,
                 "qr" => $qr
 
             ])->setPaper([0, 0, 830, 521], "portrait");
             return $pdf->stream();
         }
-
         $pdf = Pdf::loadView('pdf.operator', [
             "certificate" => $certificate,
-            "customFields" => $data,
+            "customFields" => $filteredCustom,
             "qr" => $qr
 
 

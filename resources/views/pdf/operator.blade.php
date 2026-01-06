@@ -170,7 +170,7 @@
             <tr>
                 <td>
                     <table style="width: 100%">
-                        @foreach ($certificate->customFields as $key => $item)
+                        @foreach ($customFields as $key => $item)
                             @if ($item->type != 'custom' && $key % 2 != 0)
                                 <tr>
                                     <td class="ctd" style="padding: 10px 0px">
@@ -184,7 +184,7 @@
                 </td>
                 <td>
                     <table style="width: 100%">
-                        @foreach ($certificate->customFields as $key => $item)
+                        @foreach ($customFields as $key => $item)
                             @if ($item->type != 'custom' && $key % 2 == 0)
                                 <tr>
                                     <td class="ctd" style="padding: 10px 0px">
@@ -198,7 +198,7 @@
                 </td>
             </tr>
         </table>
-        @foreach ($certificate->customFields as $item)
+        @foreach ($customFields as $item)
             @if ($item->type == 'custom')
                 <div class="customTable" style="margin-top: 30px; color:#000">{!! $provider::formatStringCertificate($item->value, $certificate) !!}</div>
             @endif
