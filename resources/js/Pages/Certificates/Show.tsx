@@ -28,44 +28,54 @@ const Show = ({ certificate }: { certificate: Certificate }) => {
             <div className="space-y-4">
                 <Card>
                     <CardHeader>
-                        <div className="flex justify-between">
+                        <div className="flex justify-between items-center flex-wrap gap-2">
                             <CardTitle>
                                 {certificate.certifier_name} -{" "}
                                 {certificate.ref_no}
                             </CardTitle>
-                            {auth.roles.includes("admin") &&
-                                certificate.approval_status == "pending" && (
-                                    <div className=" flex gap-4">
-                                        <Link
-                                            href={route(
-                                                "certificates.action",
-                                                certificate.id
-                                            )}
-                                            method="post"
-                                            data={{ status: "approved" }}
-                                        >
-                                            <Button>Approve</Button>
-                                        </Link>
-                                        <Link
-                                            href={route(
-                                                "certificates.action",
-                                                certificate.id
-                                            )}
-                                            method="post"
-                                            data={{ status: "rejected" }}
-                                        >
-                                            <Button variant={"destructive"}>
-                                                Reject
-                                            </Button>
-                                        </Link>
-                                    </div>
+                            <div className="flex items-center gap-2">
+                                {auth.roles.includes("admin") && (
+                                    <a
+                                        href={route(
+                                            "certificates.pdf",
+                                            certificate.id
+                                        )}
+                                        target="_blank"
+                                        rel="noopener noreferrer"
+                                    >
+                                        <Button variant="outline" size="sm">
+                                            View PDF
+                                        </Button>
+                                    </a>
                                 )}
-                            {/* <img
-                                width={100}
-                                height={100}
-                                src={certificate.image?.original_url}
-                                alt="sd"
-                            /> */}
+                                {auth.roles.includes("admin") &&
+                                    certificate.approval_status == "pending" && (
+                                        <>
+                                            <Link
+                                                href={route(
+                                                    "certificates.action",
+                                                    certificate.id
+                                                )}
+                                                method="post"
+                                                data={{ status: "approved" }}
+                                            >
+                                                <Button>Approve</Button>
+                                            </Link>
+                                            <Link
+                                                href={route(
+                                                    "certificates.action",
+                                                    certificate.id
+                                                )}
+                                                method="post"
+                                                data={{ status: "rejected" }}
+                                            >
+                                                <Button variant={"destructive"}>
+                                                    Reject
+                                                </Button>
+                                            </Link>
+                                        </>
+                                    )}
+                            </div>
                         </div>
                     </CardHeader>
                     <CardContent className="grid grid-cols-2 gap-4">
@@ -191,26 +201,23 @@ const Show = ({ certificate }: { certificate: Certificate }) => {
                     </CardFooter>
                 </Card>
 
-                {auth.roles.includes("admin") &&
-                    certificate.approval_status == "approved" && (
-                        <Card>
-                            <CardHeader>
-                                <CardTitle>
-                                    {certificate.certifier_name} -{" "}
-                                    {certificate.ref_no}
-                                </CardTitle>
-                            </CardHeader>
-                            <CardContent>
-                                <iframe
-                                    className="w-full min-h-[600px]"
-                                    src={route(
-                                        "certificates.pdf",
-                                        certificate.id
-                                    )}
-                                ></iframe>
-                            </CardContent>
-                        </Card>
-                    )}
+                {auth.roles.includes("admin") && (
+                    <Card>
+                        <CardHeader>
+                            <CardTitle>Certificate PDF</CardTitle>
+                        </CardHeader>
+                        <CardContent>
+                            <iframe
+                                className="w-full min-h-[600px] border rounded"
+                                src={route(
+                                    "certificates.pdf",
+                                    certificate.id
+                                )}
+                                title="Certificate PDF"
+                            />
+                        </CardContent>
+                    </Card>
+                )}
             </div>
         </Authenticated>
     );

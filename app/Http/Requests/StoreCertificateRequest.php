@@ -2,6 +2,7 @@
 
 namespace App\Http\Requests;
 
+use App\Models\CertificateType;
 use Illuminate\Foundation\Http\FormRequest;
 use Illuminate\Support\Facades\Auth;
 
@@ -22,7 +23,7 @@ class StoreCertificateRequest extends FormRequest
      */
     public function rules(): array
     {
-        return [
+        $rules = [
             "certifier_name" => "required|string",
             "certificate_name" => "required|string",
             "iqama" => "required|string",
@@ -34,7 +35,16 @@ class StoreCertificateRequest extends FormRequest
             "certificate_type_id" => "required|exists:certificate_types,id",
             "customFields" => "nullable|array",
             "customFields.*.default_value" => "required|string",
-            "image" => "nullable|image|mimes:jpg,jpeg,png|max:2048"
+            "image" => "nullable|image|mimes:jpg,jpeg,png|max:2048",
         ];
+
+        $certificateType = CertificateType::find($this->certificate_type_id);
+        if ($certificateType?->layout === 'file_based') {
+            $rules['pdf_file'] = 'required|file|mimes:pdf|max:10240';
+        } else {
+            $rules['pdf_file'] = 'nullable|file|mimes:pdf|max:10240';
+        }
+
+        return $rules;
     }
 }

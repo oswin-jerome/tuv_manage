@@ -56,6 +56,7 @@ export interface Certificate {
     custom_fields: CustomField[];
     approval_status: "pending" | "approved" | "rejected";
     image?: Media;
+    pdf_file?: Media;
     company: Company;
 }
 

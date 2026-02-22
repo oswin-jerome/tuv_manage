@@ -108,6 +108,12 @@ class Certificate extends Model implements HasMedia
             ->useDisk("local")
             ->singleFile()
         ;
+        $this
+            ->addMediaCollection('pdf_file')
+            ->useDisk("local")
+            ->singleFile()
+            ->acceptsMimeTypes(['application/pdf'])
+        ;
     }
 
     public function company()

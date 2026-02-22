@@ -2,6 +2,7 @@
 
 namespace App\Http\Requests;
 
+use App\Models\CertificateType;
 use Illuminate\Foundation\Http\FormRequest;
 use Illuminate\Support\Facades\Auth;
 
@@ -22,9 +23,7 @@ class UpdateCertificateRequest extends FormRequest
      */
     public function rules(): array
     {
-        $certificate = $this->route('certificate');
-
-        return [
+        $rules = [
             "certifier_name" => "required|string",
             "certificate_name" => "required|string",
             "iqama" => "required|string",
@@ -35,8 +34,16 @@ class UpdateCertificateRequest extends FormRequest
             "expireAt" => "nullable|date",
             "certificate_type_id" => "required|exists:certificate_types,id",
             "customFields" => "nullable|array",
-            "image" => "nullable|image|mimes:jpg,jpeg,png|max:2048"
-
+            "image" => "nullable|image|mimes:jpg,jpeg,png|max:2048",
         ];
+
+        $certificateType = CertificateType::find($this->certificate_type_id);
+        if ($certificateType?->layout === 'file_based') {
+            $rules['pdf_file'] = 'nullable|file|mimes:pdf|max:10240';
+        } else {
+            $rules['pdf_file'] = 'nullable|file|mimes:pdf|max:10240';
+        }
+
+        return $rules;
     }
 }

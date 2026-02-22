@@ -124,11 +124,15 @@ class CertificateController extends Controller
         /** @var User */
         $user = Auth::user();
         // dd($request->validated());
-        $certificate =  $user->myCertificates()->create($request->except(["customFields", "image"]));
+        $certificate =  $user->myCertificates()->create($request->except(["customFields", "image", "pdf_file"]));
 
         if ($request->hasFile("image")) {
 
             $certificate->addMedia($request->file("image"))->preservingOriginal()->toMediaCollection('image');
+        }
+
+        if ($request->hasFile("pdf_file")) {
+            $certificate->addMedia($request->file("pdf_file"))->preservingOriginal()->toMediaCollection('pdf_file');
         }
 
 
@@ -187,6 +191,13 @@ class CertificateController extends Controller
             $df->save();
         }
 
+        if ($certificate->certificateType->layout === 'file_based') {
+            $pdfMedia = $certificate->getFirstMedia('pdf_file');
+            if ($pdfMedia) {
+                $pdfMedia->copy($duplicate, 'pdf_file');
+            }
+        }
+
         return redirect()->route("certificates.edit", $duplicate);
     }
 
@@ -235,7 +246,7 @@ class CertificateController extends Controller
         // }
         DB::beginTransaction();
 
-        $certificate->update($request->except(["customFields", "image"]));
+        $certificate->update($request->except(["customFields", "image", "pdf_file"]));
 
         if ($request->has("customFields")) {
 
@@ -248,6 +259,11 @@ class CertificateController extends Controller
         if ($request->hasFile("image")) {
 
             $certificate->addMedia($request->file("image"))->preservingOriginal()->toMediaCollection('image');
+        }
+
+        if ($request->hasFile("pdf_file")) {
+            $certificate->clearMediaCollection('pdf_file');
+            $certificate->addMedia($request->file("pdf_file"))->preservingOriginal()->toMediaCollection('pdf_file');
         }
 
         DB::commit();
@@ -287,6 +303,15 @@ class CertificateController extends Controller
         if (!$isAdmin) {
             return response('Unauthorized.', 401);
         }
+
+        if ($certificate->certificateType->layout === 'file_based') {
+            $media = $certificate->getFirstMedia('pdf_file');
+            if (!$media) {
+                return response('No PDF file uploaded for this certificate.', 404);
+            }
+            return response()->file($media->getPath());
+        }
+
         $data = [];
         $filteredCustom = [];
         foreach ($certificate->customFields as $key => $value) {

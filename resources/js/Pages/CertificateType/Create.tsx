@@ -75,6 +75,9 @@ const CreateCertificateType = () => {
                                     <SelectItem value="card_noback">
                                         Card No Back
                                     </SelectItem>
+                                    <SelectItem value="file_based">
+                                        File Based (PDF Upload)
+                                    </SelectItem>
                                 </SelectContent>
                             </Select>
 

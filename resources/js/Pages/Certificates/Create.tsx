@@ -51,6 +51,7 @@ const CreateCertificateType = ({
         certificate_type_id: string;
         customFields: CustomField[] | undefined;
         image: File | null | undefined;
+        pdf_file: File | null | undefined;
     }>({
         certifier_name: "",
         certificate_name: "",
@@ -63,6 +64,7 @@ const CreateCertificateType = ({
         certificate_type_id: "",
         customFields: [],
         image: null,
+        pdf_file: null,
     });
 
     const handleSubmit = (e: FormEvent) => {
@@ -141,16 +143,32 @@ const CreateCertificateType = ({
                             />
                             <InputError message={errors.certifier_name} />
                         </div>
-                        <div>
-                            <Label>Photo</Label>
-                            <Input
-                                type="file"
-                                onChange={(e) =>
-                                    setData("image", e.target.files?.item(0))
-                                }
-                            />
-                            <InputError message={errors.image} />
-                        </div>
+                        {cType?.layout !== "file_based" && (
+                            <div>
+                                <Label>Photo</Label>
+                                <Input
+                                    type="file"
+                                    accept="image/jpeg,image/png,image/jpg"
+                                    onChange={(e) =>
+                                        setData("image", e.target.files?.item(0))
+                                    }
+                                />
+                                <InputError message={errors.image} />
+                            </div>
+                        )}
+                        {cType?.layout === "file_based" && (
+                            <div>
+                                <Label>Certificate PDF</Label>
+                                <Input
+                                    type="file"
+                                    accept="application/pdf"
+                                    onChange={(e) =>
+                                        setData("pdf_file", e.target.files?.item(0))
+                                    }
+                                />
+                                <InputError message={errors.pdf_file} />
+                            </div>
+                        )}
                         <div>
                             <Label>Certificate Name</Label>
                             <Input
