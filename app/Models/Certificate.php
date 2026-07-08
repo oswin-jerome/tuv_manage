@@ -120,4 +120,9 @@ class Certificate extends Model implements HasMedia
     {
         return $this->belongsTo(Company::class, "company_id", "id");
     }
+
+    public function jobOrder()
+    {
+        return $this->belongsTo(JobOrder::class);
+    }
 }

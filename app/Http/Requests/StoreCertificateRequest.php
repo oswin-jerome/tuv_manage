@@ -33,8 +33,9 @@ class StoreCertificateRequest extends FormRequest
             "issuedAt" => "required|date",
             "expireAt" => "nullable|date",
             "certificate_type_id" => "required|exists:certificate_types,id",
+            "job_order_number" => "nullable|string",
             "customFields" => "nullable|array",
-            "customFields.*.default_value" => "required|string",
+            "customFields.*.default_value" => "nullable|string",
             "image" => "nullable|image|mimes:jpg,jpeg,png|max:2048",
         ];
 

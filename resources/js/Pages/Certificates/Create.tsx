@@ -20,15 +20,24 @@ import { FormEvent, useRef, useState } from "react";
 import "react-quill/dist/quill.snow.css";
 import { toast } from "sonner";
 
+interface JobOrderOption { id: number; job_order_code: string; }
+
 const CreateCertificateType = ({
     certificateTypes,
     companies,
+    jobOrders,
 }: {
     certificateTypes: CertificateType[];
     companies: Company[];
+    jobOrders: JobOrderOption[];
 }) => {
     const [cType, setCType] = useState<CertificateType | undefined>();
+    const [imagePreview, setImagePreview] = useState<string | null>(null);
     const editor = useRef(null);
+    const [companyQuery, setCompanyQuery] = useState("");
+    const [showCompanyList, setShowCompanyList] = useState(false);
+    const [jobOrderQuery, setJobOrderQuery] = useState("");
+    const [showJobOrderList, setShowJobOrderList] = useState(false);
 
     const {
         post,
@@ -48,6 +57,7 @@ const CreateCertificateType = ({
         witness: string;
         issuedAt: string;
         expireAt: string;
+        job_order_number: string;
         certificate_type_id: string;
         customFields: CustomField[] | undefined;
         image: File | null | undefined;
@@ -61,6 +71,7 @@ const CreateCertificateType = ({
         witness: "",
         issuedAt: "",
         expireAt: "",
+        job_order_number: "",
         certificate_type_id: "",
         customFields: [],
         image: null,
@@ -146,12 +157,28 @@ const CreateCertificateType = ({
                         {cType?.layout !== "file_based" && (
                             <div>
                                 <Label>Photo</Label>
+                                {imagePreview && (
+                                    <div className="mb-2">
+                                        <img
+                                            src={imagePreview}
+                                            alt="Photo preview"
+                                            className="h-24 w-24 object-cover rounded border border-blue-400"
+                                        />
+                                        <p className="text-xs text-blue-500 mt-1">Photo selected</p>
+                                    </div>
+                                )}
                                 <Input
                                     type="file"
                                     accept="image/jpeg,image/png,image/jpg"
-                                    onChange={(e) =>
-                                        setData("image", e.target.files?.item(0))
-                                    }
+                                    onChange={(e) => {
+                                        const file = e.target.files?.item(0);
+                                        setData("image", file);
+                                        if (file) {
+                                            setImagePreview(URL.createObjectURL(file));
+                                        } else {
+                                            setImagePreview(null);
+                                        }
+                                    }}
                                 />
                                 <InputError message={errors.image} />
                             </div>
@@ -189,34 +216,74 @@ const CreateCertificateType = ({
                             />
                             <InputError message={errors.iqama} />
                         </div>
-                        <div>
-                            <Label>Company</Label>
-
-                            <Select
-                                required
-                                value={data.company_id}
-                                onValueChange={(val) => {
-                                    setData("company_id", val);
+                        {/* Company searchable */}
+                        <div className="relative">
+                            <Label>Company *</Label>
+                            <Input
+                                placeholder="Search company..."
+                                value={companyQuery}
+                                onFocus={() => setShowCompanyList(true)}
+                                onBlur={() => setTimeout(() => setShowCompanyList(false), 150)}
+                                onChange={(e) => {
+                                    setCompanyQuery(e.target.value);
+                                    setData("company_id", "");
+                                    setShowCompanyList(true);
                                 }}
-                            >
-                                <SelectTrigger className="">
-                                    <SelectValue placeholder="Select a company" />
-                                </SelectTrigger>
-                                <SelectContent>
-                                    {companies?.map((company) => {
-                                        return (
-                                            <SelectItem
-                                                value={company.id.toString()}
-                                            >
-                                                {company.name}
-                                            </SelectItem>
-                                        );
-                                    })}
-                                </SelectContent>
-                            </Select>
+                            />
+                            {showCompanyList && (
+                                <div className="absolute z-20 mt-1 max-h-56 w-full overflow-auto rounded-md border bg-white shadow-lg">
+                                    {companies.filter(c => c.name.toLowerCase().includes(companyQuery.toLowerCase())).map(c => (
+                                        <button type="button" key={c.id}
+                                            className="w-full px-3 py-2 text-left text-sm hover:bg-blue-50"
+                                            onMouseDown={() => {
+                                                setData("company_id", c.id.toString());
+                                                setCompanyQuery(c.name);
+                                                setShowCompanyList(false);
+                                            }}>
+                                            {c.name}
+                                        </button>
+                                    ))}
+                                </div>
+                            )}
                             <InputError message={errors.company_id} />
                         </div>
 
+                        {/* Job Order searchable */}
+                        <div className="relative">
+                            <Label>Job Order #</Label>
+                            <Input
+                                placeholder="Search job order..."
+                                value={jobOrderQuery}
+                                onFocus={() => setShowJobOrderList(true)}
+                                onBlur={() => setTimeout(() => setShowJobOrderList(false), 150)}
+                                onChange={(e) => {
+                                    setJobOrderQuery(e.target.value);
+                                    setData("job_order_number", e.target.value);
+                                    setShowJobOrderList(true);
+                                }}
+                            />
+                            {showJobOrderList && (
+                                <div className="absolute z-20 mt-1 max-h-56 w-full overflow-auto rounded-md border bg-white shadow-lg">
+                                    <button type="button"
+                                        className="w-full px-3 py-2 text-left text-sm hover:bg-blue-50 text-gray-400"
+                                        onMouseDown={() => { setData("job_order_number", ""); setJobOrderQuery(""); setShowJobOrderList(false); }}>
+                                        — None —
+                                    </button>
+                                    {jobOrders.filter(j => j.job_order_code.toLowerCase().includes(jobOrderQuery.toLowerCase())).map(j => (
+                                        <button type="button" key={j.id}
+                                            className="w-full px-3 py-2 text-left text-sm hover:bg-blue-50"
+                                            onMouseDown={() => {
+                                                setData("job_order_number", j.job_order_code);
+                                                setJobOrderQuery(j.job_order_code);
+                                                setShowJobOrderList(false);
+                                            }}>
+                                            {j.job_order_code}
+                                        </button>
+                                    ))}
+                                </div>
+                            )}
+                            <InputError message={errors.job_order_number} />
+                        </div>
                         <div>
                             <Label>Project</Label>
                             <Input
@@ -269,98 +336,47 @@ const CreateCertificateType = ({
                                     <div
                                         key={val.id}
                                         className={cn({
-                                            "md:col-span-2":
-                                                val.type == "custom",
+                                            "md:col-span-2": val.type == "custom",
                                         })}
                                     >
-                                        <div className="flex justify-between items-center mb-1">
-                                            <Label>{val.label}</Label>
-                                            <Button
-                                                onClick={(e) => {
-                                                    e.preventDefault();
-                                                    console.log(
-                                                        data.certificate_type_id,
-                                                        val.id
-                                                    );
-                                                    router.put(
-                                                        route(
-                                                            "customFields.update",
-                                                            [
-                                                                data.certificate_type_id,
-                                                                val.id,
-                                                            ]
-                                                        ),
-                                                        {
-                                                            default_value:
-                                                                val.default_value,
-                                                        },
-                                                        {
-                                                            onSuccess: () => {
-                                                                toast.info(
-                                                                    "Updated"
-                                                                );
-                                                            },
-                                                            onError: (e) => {
-                                                                console.log(e);
-                                                                toast.error(
-                                                                    e.error
-                                                                );
-                                                            },
-                                                        }
-                                                    );
-                                                }}
-                                                size={"sm"}
-                                                variant={"link"}
-                                            >
-                                                Set as default
-                                            </Button>
-                                        </div>
-                                        <div
-                                            key={val.id}
-                                            className={cn({
-                                                "md:col-span-2":
-                                                    val.type == "custom",
-                                            })}
-                                        >
-                                            {val.type == "text" && (
-                                                <Textarea
-                                                    required
-                                                    key={val + "input"}
-                                                    defaultValue={
-                                                        val.default_value
-                                                    }
-                                                    onChange={(e) => {
-                                                        val.default_value =
-                                                            e.target.value;
-                                                    }}
-                                                />
-                                            )}
-                                            {val.type == "custom" && (
-                                                <JoditEditor
-                                                    config={{
-                                                        style: {
-                                                            fontSize: "12px",
-                                                        },
-                                                    }}
-                                                    className="prose max-w-full"
-                                                    ref={editor}
-                                                    value={val.default_value}
-                                                    onBlur={(newContent) => {
-                                                        val.default_value =
-                                                            newContent;
-                                                        console.log(
-                                                            cType.custom_fields
-                                                        );
-                                                    }}
-                                                    onChange={(
-                                                        newContent
-                                                    ) => {}}
-                                                />
-                                            )}
-                                            <InputError
-                                                message={errors.customFields}
+                                        {/* Editable label — all fields editable; QR_ prefix preserved internally */}
+                                        <Input
+                                            className="mb-1 text-xs font-semibold h-7 border-dashed border-gray-300 bg-gray-50 text-gray-700 focus:bg-white"
+                                            defaultValue={val.label.startsWith("QR_")
+                                                ? val.label.replace(/^QR_/, "").replace(/_/g, " ")
+                                                : val.label}
+                                            onChange={(e) => {
+                                                val.label = val.label.startsWith("QR_")
+                                                    ? "QR_" + e.target.value.replace(/ /g, "_")
+                                                    : e.target.value;
+                                            }}
+                                        />
+                                        {val.type == "text" && (
+                                            <Input
+                                                key={val + "input"}
+                                                defaultValue={val.default_value}
+                                                onChange={(e) => { val.default_value = e.target.value; }}
                                             />
-                                        </div>
+                                        )}
+                                        {val.type == "date" && (
+                                            <Input
+                                                type="date"
+                                                key={val + "input"}
+                                                defaultValue={val.default_value}
+                                                onChange={(e) => { val.default_value = e.target.value; }}
+                                            />
+                                        )}
+                                        {val.type == "custom" && (
+                                            <JoditEditor
+                                                config={{ style: { fontSize: "12px" } }}
+                                                className="prose max-w-full"
+                                                ref={editor}
+                                                value={val.default_value}
+                                                onBlur={(newContent) => { val.default_value = newContent; }}
+                                                onChange={() => {}}
+                                            />
+                                        )}
+                                        <InputError message={errors.customFields} />
                                     </div>
                                 );
                             })}

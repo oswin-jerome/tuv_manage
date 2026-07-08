@@ -6,6 +6,7 @@ import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Toaster } from "@/components/ui/sonner";
 import {
+    BriefcaseIcon,
     CheckCircleIcon,
     FactoryIcon,
     FileIcon,
@@ -45,6 +46,12 @@ export default function Authenticated({
             label: "Certificates",
             href: route("certificates.index"),
             show: true,
+        },
+        {
+            icon: BriefcaseIcon,
+            label: "Job Orders",
+            href: route("job-orders.index"),
+            show: auth.roles.includes("admin"),
         },
         {
             icon: CheckCircleIcon,

@@ -99,14 +99,12 @@
                     <h3>Iqama</h3>
                     <p>{{ $certificate->iqama }}</p>
                 </td>
-                <td class="ctd">
-                    <h3>Valid Till</h3>
-                    @if ($certificate->expireAt != null)
-                        <p>{{ $certificate->expireAt->format('d / m / Y') }}</p>
-                    @else
-                        <p>Not Applicable</p>
-                    @endif
+
+                 <td class="ctd">
+                    <h3>Issued At</h3>
+                    <p>{{ $certificate->issuedAt->format('d / m / Y') }}</p>
                 </td>
+               
             </tr>
             <tr>
                 <td style="padding: 16px;"></td>
@@ -121,8 +119,12 @@
                     <p>{{ $certificate->project }}</p>
                 </td>
                 <td class="ctd">
-                    <h3>Issued At</h3>
-                    <p>{{ $certificate->issuedAt->format('d / m / Y') }}</p>
+                    <h3>Valid Till</h3>
+                    @if ($certificate->expireAt != null)
+                        <p>{{ $certificate->expireAt->format('d / m / Y') }}</p>
+                    @else
+                        <p>Not Applicable</p>
+                    @endif
                 </td>
 
 

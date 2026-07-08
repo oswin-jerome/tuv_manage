@@ -1,6 +1,8 @@
 <?php
 
 use App\Http\Controllers\CertificateController;
+use App\Http\Controllers\JobOrderController;
+use App\Http\Controllers\VerifyController;
 use App\Http\Controllers\CertificateTypeController;
 use App\Http\Controllers\CompanyController;
 use App\Http\Controllers\CustomFieldsController;
@@ -14,6 +16,8 @@ use Illuminate\Foundation\Application;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Route;
 use Inertia\Inertia;
+
+Route::get('/verify', [VerifyController::class, 'show'])->name('verify');
 
 Route::get('/', function () {
     return Inertia::render('Welcome', [
@@ -72,7 +76,11 @@ Route::middleware(['auth', 'verified'])->group(function () {
     Route::resource("certificates", CertificateController::class);
     Route::get("certificates/{certificate}/pdf", [CertificateController::class, "pdf"])->name("certificates.pdf");
     Route::post("certificates/{certificate}/takeAction", [CertificateController::class, "takeAction"])->name("certificates.action");
+    Route::post("certificates/{certificate}/qr-fields", [CertificateController::class, "saveQrFields"])->name("certificates.qr-fields");
     Route::resource("companies", CompanyController::class);
+    Route::post("job-orders/{jobOrder}/attach-certificate", [JobOrderController::class, "attachCertificate"])->name("job-orders.attach-certificate");
+    Route::post("job-orders/{jobOrder}/clone", [JobOrderController::class, "clone"])->name("job-orders.clone");
+    Route::resource("job-orders", JobOrderController::class);
 });
 
 Route::middleware('auth')->group(function () {

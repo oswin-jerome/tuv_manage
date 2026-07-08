@@ -18,6 +18,7 @@ class CertificateResource extends JsonResource
         $data = parent::toArray($request);
         $data['custom_fields'] = $this->customFields;
         $data['pdf_file'] = $this->getFirstMedia('pdf_file');
+        $data['image'] = $this->getFirstMedia('image');
         return $data;
     }
 }
