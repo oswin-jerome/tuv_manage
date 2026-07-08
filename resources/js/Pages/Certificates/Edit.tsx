@@ -450,7 +450,7 @@ const CreateCertificateType = ({
                         </div>
                     </form>
                     <a
-                        target="__blank"
+                        target="_blank"
                         href={route("certificates.pdf", certificate.id)}
                     >
                         <Button>Preview PDF</Button>

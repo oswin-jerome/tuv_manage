@@ -16,7 +16,8 @@ class JobOrder extends Model
 
     public function getJobOrderCodeAttribute(): string
     {
-        return 'JOB-' . str_pad($this->id, 4, '0', STR_PAD_LEFT);
+        $shortCode = $this->company?->short_code ?? 'JOB';
+        return $shortCode . '-' . (1000 + $this->id);
     }
 
     public function creator()

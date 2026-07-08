@@ -75,6 +75,7 @@ Route::middleware(['auth', 'verified'])->group(function () {
     Route::post("certificates/{certificate}/duplicate", [CertificateController::class, "duplicate"])->name("certificates.duplicate");
     Route::resource("certificates", CertificateController::class);
     Route::get("certificates/{certificate}/pdf", [CertificateController::class, "pdf"])->name("certificates.pdf");
+    Route::get("certificates/{certificate}/image", [CertificateController::class, "serveImage"])->name("certificates.image");
     Route::post("certificates/{certificate}/takeAction", [CertificateController::class, "takeAction"])->name("certificates.action");
     Route::post("certificates/{certificate}/qr-fields", [CertificateController::class, "saveQrFields"])->name("certificates.qr-fields");
     Route::resource("companies", CompanyController::class);

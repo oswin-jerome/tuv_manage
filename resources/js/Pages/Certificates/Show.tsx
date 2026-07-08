@@ -15,7 +15,6 @@ import { Link, usePage } from "@inertiajs/react";
 import JoditEditor from "jodit-react";
 import moment from "moment";
 import { useRef } from "react";
-import { usePDF } from "react-to-pdf";
 
 const QR_FIELD_LABELS: Record<string, string> = {
     QR_Equipment_Description: "Equipment Description",
@@ -34,7 +33,6 @@ const Show = ({
     certificate: Certificate;
     qrFields: Record<string, string>;
 }) => {
-    const { toPDF, targetRef } = usePDF({ filename: "page.pdf" });
     const auth = usePage().props.auth;
     const user = auth.user;
     const editor = useRef(null);
