@@ -84,8 +84,8 @@
                 </td>
                 <td>
                     <img src="{{ $certificate->image }}"
-                        style="position: absolute;right: 1em;top:1em;border: 4px solid #000; object-fit: cover;"
-                        height="200px" alt="">
+                        style="position: absolute;right: 1em;top:1em;border: 3px solid #000; object-fit: cover; object-position: center top;"
+                        width="130px" height="165px" alt="">
                 </td>
             </tr>
         </table>
@@ -99,14 +99,12 @@
                     <h3>Iqama</h3>
                     <p>{{ $certificate->iqama }}</p>
                 </td>
-                <td class="ctd">
-                    <h3>Valid Till</h3>
-                    @if ($certificate->expireAt != null)
-                        <p>{{ $certificate->expireAt->format('d / m / Y') }}</p>
-                    @else
-                        <p>Not Applicable</p>
-                    @endif
+
+                 <td class="ctd">
+                    <h3>Issued At</h3>
+                    <p>{{ $certificate->issuedAt->format('d / m / Y') }}</p>
                 </td>
+               
             </tr>
             <tr>
                 <td style="padding: 16px;"></td>
@@ -121,8 +119,12 @@
                     <p>{{ $certificate->project }}</p>
                 </td>
                 <td class="ctd">
-                    <h3>Issued At</h3>
-                    <p>{{ $certificate->issuedAt->format('d / m / Y') }}</p>
+                    <h3>Valid Till</h3>
+                    @if ($certificate->expireAt != null)
+                        <p>{{ $certificate->expireAt->format('d / m / Y') }}</p>
+                    @else
+                        <p>Not Applicable</p>
+                    @endif
                 </td>
 
 

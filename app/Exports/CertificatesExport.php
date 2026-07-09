@@ -25,6 +25,7 @@ class CertificatesExport implements FromArray, WithHeadings
             /** @var Certificate */
             $c = $certificate;
             array_push($data, [
+                "Job Order #" => $c->job_order_number ?? "",
                 "Ref #" => $certificate->ref_no,
                 "Name" => $certificate->certifier_name,
                 "Company" => $c->company->name,
@@ -41,6 +42,7 @@ class CertificatesExport implements FromArray, WithHeadings
     public function headings(): array
     {
         return [
+            "Job Order #",
             "Ref #",
             "Name",
             "Company",

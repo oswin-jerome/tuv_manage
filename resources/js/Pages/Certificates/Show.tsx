@@ -15,13 +15,31 @@ import { Link, usePage } from "@inertiajs/react";
 import JoditEditor from "jodit-react";
 import moment from "moment";
 import { useRef } from "react";
-import { usePDF } from "react-to-pdf";
 
-const Show = ({ certificate }: { certificate: Certificate }) => {
-    const { toPDF, targetRef } = usePDF({ filename: "page.pdf" });
+const QR_FIELD_LABELS: Record<string, string> = {
+    QR_Equipment_Description: "Equipment Description",
+    QR_Serial_Number: "Serial Number",
+    QR_Asset_Number: "Asset Number",
+    QR_Capacity_SWL: "Capacity / SWL",
+    QR_Inspection_Standard: "Inspection Standard",
+    QR_Inspection_Date: "Inspection Date",
+    QR_Next_Due_Date: "Next Due Date",
+};
+
+const Show = ({
+    certificate,
+    qrFields,
+}: {
+    certificate: Certificate;
+    qrFields: Record<string, string>;
+}) => {
     const auth = usePage().props.auth;
     const user = auth.user;
     const editor = useRef(null);
+
+    const filledQrFields = Object.entries(QR_FIELD_LABELS).filter(
+        ([key]) => qrFields[key] && qrFields[key].trim() !== ""
+    );
 
     return (
         <Authenticated>
@@ -89,7 +107,11 @@ const Show = ({ certificate }: { certificate: Certificate }) => {
                         <div>
                             <Label>Certificate Type</Label>
                             <Input
-                                value={certificate.certificate_type.name}
+                                value={
+                                    certificate.certificate_type.layout === "file_based"
+                                        ? certificate.certificate_name
+                                        : certificate.certificate_type.name
+                                }
                                 readOnly
                             />
                         </div>
@@ -103,6 +125,10 @@ const Show = ({ certificate }: { certificate: Certificate }) => {
                                 value={certificate?.company?.name}
                                 readOnly
                             />
+                        </div>
+                        <div>
+                            <Label>Job Order #</Label>
+                            <Input value={certificate.job_order_number ?? ""} readOnly />
                         </div>
                         <div>
                             <Label>Ref #</Label>
@@ -141,11 +167,30 @@ const Show = ({ certificate }: { certificate: Certificate }) => {
                                 readOnly
                             />
                         </div>
+
+                        {/* QR Verification Fields — read-only, shown only if filled */}
+                        {filledQrFields.length > 0 && (
+                            <div className="md:col-span-2 border-t pt-4 mt-2">
+                                <p className="font-semibold text-sm mb-3">QR Code Verification Fields</p>
+                                <div className="grid grid-cols-2 gap-4">
+                                    {filledQrFields.map(([key, label]) => (
+                                        <div key={key}>
+                                            <Label>{label}</Label>
+                                            <Input value={qrFields[key]} readOnly />
+                                        </div>
+                                    ))}
+                                </div>
+                            </div>
+                        )}
+
                         {certificate.custom_fields.map((cf) => {
+                            const displayLabel = cf.label?.startsWith("QR_")
+                                ? cf.label.replace(/^QR_/, "").replace(/_/g, " ")
+                                : (cf.key || cf.label);
                             if (cf.type == "custom") {
                                 return (
                                     <div className="md:col-span-2">
-                                        <Label>{cf.key}</Label>
+                                        <Label>{displayLabel}</Label>
                                         <JoditEditor
                                             config={{
                                                 readonly: true,
@@ -164,8 +209,8 @@ const Show = ({ certificate }: { certificate: Certificate }) => {
 
                             return (
                                 <div>
-                                    <Label>{cf.key}</Label>
-                                    <Textarea value={cf.value} readOnly />
+                                    <Label>{displayLabel}</Label>
+                                    <Input value={cf.value ?? ""} readOnly />
                                 </div>
                             );
                         })}

@@ -47,6 +47,19 @@ export default function EmployeeList({
     request: any;
 }) {
     const [searchTerm, setSearchTerm] = useState("");
+    const [companyQuery, setCompanyQuery] = useState(
+        request.company_name ?? ""
+    );
+    const [showCompanyOptions, setShowCompanyOptions] = useState(false);
+
+    const filteredCompanies = companyQuery.trim()
+        ? companies.filter((company) =>
+              company.name
+                  .toLowerCase()
+                  .includes(companyQuery.trim().toLowerCase())
+          )
+        : [];
+
     // const page = router.;
     return (
         <Authenticated>
@@ -113,29 +126,43 @@ export default function EmployeeList({
                                     </SelectContent>
                                 </Select>
                             </div>
-                            <div>
+                            <div className="relative">
                                 <Label>Company</Label>
-                                <Select
-                                    name="company_id"
-                                    defaultValue={request.company_id ?? "0"}
-                                    onValueChange={(val) => {}}
-                                >
-                                    <SelectTrigger className="">
-                                        <SelectValue placeholder="Select a Company" />
-                                    </SelectTrigger>
-                                    <SelectContent>
-                                        <SelectItem value={"0"}>All</SelectItem>
-                                        {companies?.map((company) => {
-                                            return (
-                                                <SelectItem
-                                                    value={company.id.toString()}
-                                                >
-                                                    {company.name}
-                                                </SelectItem>
-                                            );
-                                        })}
-                                    </SelectContent>
-                                </Select>
+                                <Input
+                                    type="text"
+                                    value={companyQuery}
+                                    name="company_name"
+                                    placeholder="Type company name"
+                                    onFocus={() => setShowCompanyOptions(true)}
+                                    onBlur={() => {
+                                        window.setTimeout(
+                                            () => setShowCompanyOptions(false),
+                                            150
+                                        );
+                                    }}
+                                    onChange={(event) => {
+                                        setCompanyQuery(event.target.value);
+                                        setShowCompanyOptions(true);
+                                    }}
+                                />
+                                {showCompanyOptions && filteredCompanies.length > 0 && (
+                                    <div className="absolute z-20 mt-1 max-h-56 w-full overflow-auto rounded-md border border-muted bg-background shadow-lg">
+                                        {filteredCompanies.map((company) => (
+                                            <button
+                                                type="button"
+                                                key={company.id}
+                                                className="w-full cursor-pointer px-3 py-2 text-left text-sm hover:bg-accent hover:text-accent-foreground"
+                                                onMouseDown={(event) => {
+                                                    event.preventDefault();
+                                                    setCompanyQuery(company.name);
+                                                    setShowCompanyOptions(false);
+                                                }}
+                                            >
+                                                {company.name}
+                                            </button>
+                                        ))}
+                                    </div>
+                                )}
                             </div>
                             <div>
                                 <Label>Issued Date</Label>
@@ -161,6 +188,7 @@ export default function EmployeeList({
                                         <TableHead>
                                             Certifier / Equipment Name
                                         </TableHead>
+                                        <TableHead>Job Order #</TableHead>
                                         <TableHead>Ref #</TableHead>
                                         <TableHead>Company</TableHead>
                                         <TableHead>Type</TableHead>
@@ -176,16 +204,18 @@ export default function EmployeeList({
                                                 {certificate.certifier_name}
                                             </TableCell>
                                             <TableCell className="font-medium">
+                                                {certificate.job_order_number ?? "-"}
+                                            </TableCell>
+                                            <TableCell className="font-medium">
                                                 {certificate.ref_no}
                                             </TableCell>
                                             <TableCell className="font-medium">
                                                 {certificate.company.name}
                                             </TableCell>
                                             <TableCell className="font-medium">
-                                                {
-                                                    certificate.certificate_type
-                                                        .name
-                                                }
+                                                {certificate.certificate_type.layout === "file_based"
+                                                    ? certificate.certificate_name
+                                                    : certificate.certificate_type.name}
                                             </TableCell>
                                             <TableCell className="font-medium">
                                                 <span

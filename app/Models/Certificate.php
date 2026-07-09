@@ -95,9 +95,13 @@ class Certificate extends Model implements HasMedia
 
     public function registerMediaConversions(?Media $media = null): void
     {
+        if (!function_exists('proc_open')) {
+            return;
+        }
         $this
             ->addMediaConversion('thumb')
             ->fit(Fit::Crop, 350, 300)
+            ->performOnCollections('image')
             ->nonQueued();
     }
 
@@ -119,5 +123,10 @@ class Certificate extends Model implements HasMedia
     public function company()
     {
         return $this->belongsTo(Company::class, "company_id", "id");
+    }
+
+    public function jobOrder()
+    {
+        return $this->belongsTo(JobOrder::class);
     }
 }

@@ -18,6 +18,7 @@ import {
     TableHeader,
     TableRow,
 } from "@/components/ui/table";
+import { Checkbox } from "@/components/ui/checkbox";
 import Authenticated from "@/Layouts/AuthenticatedLayout";
 import { CertificateType, CustomField } from "@/types";
 import { router, useForm } from "@inertiajs/react";
@@ -32,7 +33,12 @@ const CreateCertificateType = ({
     certificateType: CertificateType;
 }) => {
     const editor = useRef(null);
-    const { data, setData, errors, post, reset } = useForm<CustomField>();
+    const { data, setData, errors, post, reset } = useForm<CustomField & { show_on_qr: boolean }>({
+        label: "",
+        type: "",
+        default_value: "",
+        show_on_qr: false,
+    } as any);
     const [customField, setCustomField] = useState<CustomField>();
     const {
         data: certData,
@@ -50,8 +56,12 @@ const CreateCertificateType = ({
 
     const handleCustomFieldAdd = (e: FormEvent) => {
         e.preventDefault();
-
+        const submitData = { ...data };
+        if ((submitData as any).show_on_qr && !submitData.label.startsWith("QR_")) {
+            submitData.label = "QR_" + submitData.label;
+        }
         post(route("customFields.store", certificateType.id), {
+            data: submitData,
             onSuccess: () => {
                 toast.success("Custom Field Added");
                 reset();
@@ -142,6 +152,7 @@ const CreateCertificateType = ({
                                     <TableHead>Label</TableHead>
                                     <TableHead>Type</TableHead>
                                     <TableHead>Default Value</TableHead>
+                                    <TableHead>QR</TableHead>
                                     <TableHead>Action</TableHead>
                                 </TableRow>
                             </TableHeader>
@@ -155,6 +166,11 @@ const CreateCertificateType = ({
                                                 {cf.type == "custom"
                                                     ? "custom"
                                                     : cf.default_value}
+                                            </TableCell>
+                                            <TableCell>
+                                                {cf.label.startsWith("QR_") && (
+                                                    <span className="text-xs font-semibold text-blue-600 bg-blue-100 px-2 py-0.5 rounded">QR</span>
+                                                )}
                                             </TableCell>
                                             <TableCell>
                                                 <Button
@@ -232,8 +248,11 @@ const CreateCertificateType = ({
                                         <SelectItem value="text">
                                             Text
                                         </SelectItem>
+                                        <SelectItem value="date">
+                                            Date
+                                        </SelectItem>
                                         <SelectItem value="custom">
-                                            Custom
+                                            Custom (Rich Text)
                                         </SelectItem>
                                     </SelectContent>
                                 </Select>
@@ -246,10 +265,17 @@ const CreateCertificateType = ({
                                         defaultValue={data.default_value}
                                         value={data.default_value}
                                         onChange={(e) => {
-                                            setData(
-                                                "default_value",
-                                                e.target.value
-                                            );
+                                            setData("default_value", e.target.value);
+                                        }}
+                                    />
+                                )}
+                                {data.type == "date" && (
+                                    <Input
+                                        type="date"
+                                        defaultValue={data.default_value}
+                                        value={data.default_value}
+                                        onChange={(e) => {
+                                            setData("default_value", e.target.value);
                                         }}
                                     />
                                 )}
@@ -275,6 +301,18 @@ const CreateCertificateType = ({
                                 <InputError message={errors.default_value} />
                             </div>
 
+                            <div className="col-span-2 flex items-center gap-2">
+                                <Checkbox
+                                    id="show_on_qr"
+                                    checked={(data as any).show_on_qr}
+                                    onCheckedChange={(checked) =>
+                                        setData("show_on_qr" as any, !!checked)
+                                    }
+                                />
+                                <Label htmlFor="show_on_qr" className="cursor-pointer">
+                                    Show on QR verification page
+                                </Label>
+                            </div>
                             <div>
                                 <Button>Add</Button>
                             </div>

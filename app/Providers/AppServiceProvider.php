@@ -14,7 +14,7 @@ class AppServiceProvider extends ServiceProvider
     public function register(): void
     {
         URL::forceRootUrl(env("APP_URL"));
-        URL::forceScheme(env("APP_SCHEMA", "https"));
+        URL::forceScheme(env("APP_SCHEMA", "http"));
     }
 
     /**

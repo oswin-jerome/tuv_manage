@@ -21,23 +21,38 @@ import { FormEvent, useEffect, useRef, useState } from "react";
 import "react-quill/dist/quill.snow.css";
 import { toast } from "sonner";
 
+interface JobOrderOption { id: number; job_order_code: string; }
+
 const CreateCertificateType = ({
     certificateTypes,
     certificate,
     companies,
+    jobOrders,
 }: {
     certificateTypes: CertificateType[];
     certificate: Certificate;
     companies: Company[];
+    jobOrders: JobOrderOption[];
 }) => {
     const [cType, setCType] = useState<CertificateType | undefined>(
         certificateTypes.find((c) => c.id === certificate.certificate_type_id)
     );
+    const [imagePreview, setImagePreview] = useState<string | null>(null);
     const editor = useRef(null);
+    const currentCompany = companies.find(c => c.id.toString() === certificate.company_id.toString());
+    const [companyQuery, setCompanyQuery] = useState(currentCompany?.name ?? "");
+    const [showCompanyList, setShowCompanyList] = useState(false);
+    const [jobOrderQuery, setJobOrderQuery] = useState(certificate.job_order_number ?? "");
+    const [showJobOrderList, setShowJobOrderList] = useState(false);
 
     useEffect(() => {
         if (cType?.id === certificate.certificate_type_id) {
-            setData("customFields", certificate.custom_fields);
+            // Merge: existing saved fields + any QR_ fields not yet saved for this cert
+            const existingLabels = new Set((certificate.custom_fields ?? []).map((cf: any) => cf.label));
+            const missingQrFields = (cType?.custom_fields ?? [])
+                .filter((cf: any) => cf.label?.startsWith("QR_") && !existingLabels.has(cf.label))
+                .map((cf: any) => ({ ...cf, id: null, value: cf.default_value ?? '' }));
+            setData("customFields", [...(certificate.custom_fields ?? []), ...missingQrFields]);
         } else {
             setData("customFields", cType!.custom_fields);
         }
@@ -59,6 +74,7 @@ const CreateCertificateType = ({
         company_id: string;
         project: string;
         ref_no: string;
+        job_order_number: string;
         witness: string;
         issuedAt: string;
         expireAt: string;
@@ -74,6 +90,7 @@ const CreateCertificateType = ({
         company_id: certificate.company_id.toString(),
         project: certificate.project,
         ref_no: certificate.ref_no,
+        job_order_number: certificate.job_order_number ?? "",
         witness: certificate.witness,
         issuedAt: certificate.issuedAt.toString(),
         expireAt: certificate.expireAt?.toString() ?? "",
@@ -165,12 +182,42 @@ const CreateCertificateType = ({
                         {cType?.layout !== "file_based" && (
                             <div>
                                 <Label>Photo</Label>
+                                {certificate.image?.original_url && !imagePreview && (
+                                    <div className="mb-2">
+                                        <img
+                                            src={certificate.image.original_url}
+                                            alt="Current photo"
+                                            className="h-24 w-24 object-cover rounded border"
+                                            onError={(e) => {
+                                                const el = e.target as HTMLImageElement;
+                                                el.parentElement!.innerHTML = '<p class="text-xs text-gray-400 py-2">📎 Photo saved on server</p>';
+                                            }}
+                                        />
+                                        <p className="text-xs text-gray-500 mt-1">Current photo — upload new to replace</p>
+                                    </div>
+                                )}
+                                {imagePreview && (
+                                    <div className="mb-2">
+                                        <img
+                                            src={imagePreview}
+                                            alt="New photo preview"
+                                            className="h-24 w-24 object-cover rounded border border-blue-400"
+                                        />
+                                        <p className="text-xs text-blue-500 mt-1">New photo selected</p>
+                                    </div>
+                                )}
                                 <Input
                                     type="file"
                                     accept="image/jpeg,image/png,image/jpg"
-                                    onChange={(e) =>
-                                        setData("image", e.target.files?.item(0))
-                                    }
+                                    onChange={(e) => {
+                                        const file = e.target.files?.item(0);
+                                        setData("image", file);
+                                        if (file) {
+                                            setImagePreview(URL.createObjectURL(file));
+                                        } else {
+                                            setImagePreview(null);
+                                        }
+                                    }}
                                 />
                                 <InputError message={errors.image} />
                             </div>
@@ -213,31 +260,73 @@ const CreateCertificateType = ({
                             />
                             <InputError message={errors.iqama} />
                         </div>
-                        <div>
-                            <Label>Company</Label>
-                            <Select
-                                required
-                                defaultValue={data.company_id}
-                                onValueChange={(val) => {
-                                    setData("company_id", val);
+                        {/* Company searchable */}
+                        <div className="relative">
+                            <Label>Company *</Label>
+                            <Input
+                                placeholder="Search company..."
+                                value={companyQuery}
+                                onFocus={() => setShowCompanyList(true)}
+                                onBlur={() => setTimeout(() => setShowCompanyList(false), 150)}
+                                onChange={(e) => {
+                                    setCompanyQuery(e.target.value);
+                                    setData("company_id", "");
+                                    setShowCompanyList(true);
                                 }}
-                            >
-                                <SelectTrigger className="">
-                                    <SelectValue placeholder="Select a type" />
-                                </SelectTrigger>
-                                <SelectContent>
-                                    {companies?.map((company) => {
-                                        return (
-                                            <SelectItem
-                                                value={company.id.toString()}
-                                            >
-                                                {company.name}
-                                            </SelectItem>
-                                        );
-                                    })}
-                                </SelectContent>
-                            </Select>
+                            />
+                            {showCompanyList && (
+                                <div className="absolute z-20 mt-1 max-h-56 w-full overflow-auto rounded-md border bg-white shadow-lg">
+                                    {companies.filter(c => c.name.toLowerCase().includes(companyQuery.toLowerCase())).map(c => (
+                                        <button type="button" key={c.id}
+                                            className="w-full px-3 py-2 text-left text-sm hover:bg-blue-50"
+                                            onMouseDown={() => {
+                                                setData("company_id", c.id.toString());
+                                                setCompanyQuery(c.name);
+                                                setShowCompanyList(false);
+                                            }}>
+                                            {c.name}
+                                        </button>
+                                    ))}
+                                </div>
+                            )}
                             <InputError message={errors.company_id} />
+                        </div>
+
+                        {/* Job Order searchable */}
+                        <div className="relative">
+                            <Label>Job Order #</Label>
+                            <Input
+                                placeholder="Search job order..."
+                                value={jobOrderQuery}
+                                onFocus={() => setShowJobOrderList(true)}
+                                onBlur={() => setTimeout(() => setShowJobOrderList(false), 150)}
+                                onChange={(e) => {
+                                    setJobOrderQuery(e.target.value);
+                                    setData("job_order_number", e.target.value);
+                                    setShowJobOrderList(true);
+                                }}
+                            />
+                            {showJobOrderList && (
+                                <div className="absolute z-20 mt-1 max-h-56 w-full overflow-auto rounded-md border bg-white shadow-lg">
+                                    <button type="button"
+                                        className="w-full px-3 py-2 text-left text-sm hover:bg-blue-50 text-gray-400"
+                                        onMouseDown={() => { setData("job_order_number", ""); setJobOrderQuery(""); setShowJobOrderList(false); }}>
+                                        — None —
+                                    </button>
+                                    {jobOrders.filter(j => j.job_order_code.toLowerCase().includes(jobOrderQuery.toLowerCase())).map(j => (
+                                        <button type="button" key={j.id}
+                                            className="w-full px-3 py-2 text-left text-sm hover:bg-blue-50"
+                                            onMouseDown={() => {
+                                                setData("job_order_number", j.job_order_code);
+                                                setJobOrderQuery(j.job_order_code);
+                                                setShowJobOrderList(false);
+                                            }}>
+                                            {j.job_order_code}
+                                        </button>
+                                    ))}
+                                </div>
+                            )}
+                            <InputError message={errors.job_order_number} />
                         </div>
                         <div>
                             <Label>Project</Label>
@@ -301,94 +390,50 @@ const CreateCertificateType = ({
                             data?.customFields.map((val) => {
                                 return (
                                     <div
-                                        key={val.id}
+                                        key={val.id ?? val.label}
                                         className={cn({
-                                            "md:col-span-2":
-                                                val.type == "custom",
+                                            "md:col-span-2": val.type == "custom",
                                         })}
                                     >
-                                        <div className="flex justify-between items-center mb-1">
-                                            <Label>{val.label}</Label>
-                                            <Button
-                                                onClick={(e) => {
-                                                    e.preventDefault();
-                                                    console.log(
-                                                        data.certificate_type_id,
-                                                        val.custom_field_id
-                                                    );
-                                                    router.put(
-                                                        route(
-                                                            "customFields.update",
-                                                            [
-                                                                data.certificate_type_id,
-                                                                val.custom_field_id,
-                                                            ]
-                                                        ),
-                                                        {
-                                                            default_value:
-                                                                val.value,
-                                                        },
-                                                        {
-                                                            onSuccess: () => {
-                                                                toast.info(
-                                                                    "Updated"
-                                                                );
-                                                            },
-                                                            onError: (e) => {
-                                                                console.log(e);
-                                                                toast.error(
-                                                                    e.error
-                                                                );
-                                                            },
-                                                        }
-                                                    );
-                                                }}
-                                                size={"sm"}
-                                                variant={"link"}
-                                            >
-                                                Set as default
-                                            </Button>
-                                        </div>
-
+                                        {/* Editable label — all fields editable; QR_ prefix preserved internally */}
+                                        <Input
+                                            className="mb-1 text-xs font-semibold h-7 border-dashed border-gray-300 bg-gray-50 text-gray-700 focus:bg-white"
+                                            defaultValue={val.label.startsWith("QR_")
+                                                ? val.label.replace(/^QR_/, "").replace(/_/g, " ")
+                                                : val.label}
+                                            onChange={(e) => {
+                                                val.label = val.label.startsWith("QR_")
+                                                    ? "QR_" + e.target.value.replace(/ /g, "_")
+                                                    : e.target.value;
+                                            }}
+                                        />
                                         <div className="prose max-w-full list-disc">
                                             {val.type == "text" && (
-                                                <Textarea
+                                                <Input
                                                     key={val + "input"}
-                                                    defaultValue={
-                                                        val.value ??
-                                                        val.default_value
-                                                    }
-                                                    onChange={(e) => {
-                                                        val.value =
-                                                            e.target.value;
-                                                    }}
+                                                    defaultValue={val.value ?? val.default_value}
+                                                    onChange={(e) => { val.value = e.target.value; }}
+                                                />
+                                            )}
+                                            {val.type == "date" && (
+                                                <Input
+                                                    type="date"
+                                                    key={val + "input"}
+                                                    defaultValue={val.value ?? val.default_value}
+                                                    onChange={(e) => { val.value = e.target.value; }}
                                                 />
                                             )}
                                             {val.type == "custom" && (
                                                 <JoditEditor
                                                     className="prose max-w-full list-disc"
                                                     ref={editor}
-                                                    config={{
-                                                        inline: true,
-                                                        style: {
-                                                            fontSize: "12px",
-                                                        },
-                                                    }}
-                                                    value={
-                                                        val.value ??
-                                                        val.default_value
-                                                    }
-                                                    onBlur={(newContent) => {
-                                                        val.value = newContent;
-                                                    }}
-                                                    onChange={(
-                                                        newContent
-                                                    ) => {}}
+                                                    config={{ inline: true, style: { fontSize: "12px" } }}
+                                                    value={val.value ?? val.default_value}
+                                                    onBlur={(newContent) => { val.value = newContent; }}
+                                                    onChange={() => {}}
                                                 />
                                             )}
-                                            <InputError
-                                                message={errors.customFields}
-                                            />
+                                            <InputError message={errors.customFields} />
                                         </div>
                                     </div>
                                 );
@@ -405,7 +450,7 @@ const CreateCertificateType = ({
                         </div>
                     </form>
                     <a
-                        target="__blank"
+                        target="_blank"
                         href={route("certificates.pdf", certificate.id)}
                     >
                         <Button>Preview PDF</Button>

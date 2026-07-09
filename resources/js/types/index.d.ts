@@ -35,6 +35,27 @@ export interface CertificateType {
     custom_fields: CustomField[];
 }
 
+export interface JobOrder {
+    id: number;
+    job_order_code: string;
+    department: string;
+    job_order_type: string;
+    status: string;
+    creator_id: number;
+    assigned_to_id?: number;
+    company_id: number;
+    job_request_number?: string;
+    location?: string;
+    date_from?: string;
+    date_to?: string;
+    created_at: Date;
+    updated_at: Date;
+    creator: User;
+    assigned_to?: User;
+    company: Company;
+    certificates?: Certificate[];
+}
+
 export interface Certificate {
     id: number;
     certifier_name: string;
@@ -43,6 +64,9 @@ export interface Certificate {
     company_id: string;
     project: string;
     ref_no: string;
+    job_order_number?: string;
+    job_order_id?: number;
+    job_order?: JobOrder;
     witness: string;
     issuedAt: Date;
     expireAt?: Date;
