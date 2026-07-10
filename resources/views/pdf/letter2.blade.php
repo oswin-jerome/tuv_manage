@@ -231,7 +231,7 @@
         <table>
             <tr>
                 @if ($certificate->image)
-                    <td style="width: 80px"><img style="width: 80px;border: 4px solid #064463;margin-right:8px;"
+                    <td style="width: 80px"><img style="width: 80px; height: 96px; border: 4px solid #064463; margin-right: 8px; object-fit: cover;"
                             src="{{ $certificate->image }}" alt="">
                     </td>
                 @else

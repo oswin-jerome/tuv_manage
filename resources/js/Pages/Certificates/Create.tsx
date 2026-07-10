@@ -162,7 +162,7 @@ const CreateCertificateType = ({
                                         <img
                                             src={imagePreview}
                                             alt="Photo preview"
-                                            className="h-24 w-24 object-cover rounded border border-blue-400"
+                                            className="h-24 w-20 object-cover rounded border border-blue-400"
                                         />
                                         <p className="text-xs text-blue-500 mt-1">Photo selected</p>
                                     </div>
