@@ -85,7 +85,7 @@
                 <td>
                     <img src="{{ $certificate->image }}"
                         style="position: absolute;right: 1em;top:1em;border: 4px solid #000; object-fit: cover;"
-                        width="167px" height="200px" alt="">
+                        width="180px" height="180px" alt="">
 
                 </td>
             </tr>

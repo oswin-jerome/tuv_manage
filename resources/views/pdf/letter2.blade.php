@@ -227,15 +227,15 @@
         style="position: fixed; opacity: 0.05; top:50%;right:50% ; transform: translate(50%,-50%)" alt="">
 
     {{-- QR AND IMAGE --}}
-    <div style="width: 215px; top:5px; right:0em; position: absolute;">
+    <div style="width: 280px; top:5px; right:0em; position: absolute;">
         <table>
             <tr>
                 @if ($certificate->image)
-                    <td style="width: 80px"><img style="width: 80px; height: 96px; border: 4px solid #064463; margin-right: 8px; object-fit: cover;"
+                    <td style="width: 180px"><img style="width: 180px; height: 180px; border: 4px solid #064463; margin-right: 8px; object-fit: cover;"
                             src="{{ $certificate->image }}" alt="">
                     </td>
                 @else
-                    <td style="width: 80px;"></td>
+                    <td style="width: 180px;"></td>
                 @endif
                 <td><img style="width: 80px" src="data:image/png;base64, {!! $qr !!}" alt="">
                     <p style="margin-top: 4px; text-align: center">Scan to verify</p>
