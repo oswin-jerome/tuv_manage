@@ -187,7 +187,7 @@ const CreateCertificateType = ({
                                         <img
                                             src={certificate.image.original_url}
                                             alt="Current photo"
-                                            className="h-24 w-24 object-cover rounded border"
+                                            className="h-24 w-20 object-cover rounded border"
                                             onError={(e) => {
                                                 const el = e.target as HTMLImageElement;
                                                 el.parentElement!.innerHTML = '<p class="text-xs text-gray-400 py-2">📎 Photo saved on server</p>';
@@ -201,7 +201,7 @@ const CreateCertificateType = ({
                                         <img
                                             src={imagePreview}
                                             alt="New photo preview"
-                                            className="h-24 w-24 object-cover rounded border border-blue-400"
+                                            className="h-24 w-20 object-cover rounded border border-blue-400"
                                         />
                                         <p className="text-xs text-blue-500 mt-1">New photo selected</p>
                                     </div>
