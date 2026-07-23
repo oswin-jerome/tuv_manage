@@ -89,7 +89,7 @@ export default function EmployeeList({
                         </div>
                         <form
                             action=""
-                            className="grid grid-cols-4 gap-4 items-end"
+                            className="grid grid-cols-1 md:grid-cols-3 lg:grid-cols-6 gap-4 items-end"
                         >
                             <div>
                                 <Label>Ref #</Label>
@@ -170,6 +170,14 @@ export default function EmployeeList({
                                     type="date"
                                     defaultValue={request.issuedAt ?? ""}
                                     name="issuedAt"
+                                />
+                            </div>
+                            <div>
+                                <Label>Issued Month</Label>
+                                <Input
+                                    type="month"
+                                    defaultValue={request.issued_month ?? ""}
+                                    name="issued_month"
                                 />
                             </div>
                             <div>
