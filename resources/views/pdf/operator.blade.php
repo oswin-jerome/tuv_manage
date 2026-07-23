@@ -150,7 +150,7 @@
 
                 </td>
                 <td style="width: 60%">
-                    <img src="foot2.jpg" style="" width="89%" alt="">
+                    <img src="{{ public_path('foot2.jpg') }}" style="" width="89%" alt="">
                 </td>
             </tr>
         </table>

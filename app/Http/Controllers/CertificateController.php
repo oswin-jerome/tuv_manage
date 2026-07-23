@@ -57,6 +57,14 @@ class CertificateController extends Controller
             $certificates = $certificates->where("issuedAt", $request->get("issuedAt"));
         }
 
+        if ($request->has("issued_month") && $request->get("issued_month") != "") {
+            $parts = explode('-', $request->get("issued_month"));
+            if (count($parts) === 2) {
+                $certificates = $certificates->whereYear("issuedAt", $parts[0])
+                    ->whereMonth("issuedAt", $parts[1]);
+            }
+        }
+
         $certificates = $certificates->join("companies", "companies.id", "=", "certificates.company_id")
             ->orderBy("certificates.id", "DESC")
             ->select("certificates.*");
@@ -99,6 +107,14 @@ class CertificateController extends Controller
 
         if ($request->has("issuedAt") && $request->get("issuedAt") != "0" && $request->get("issuedAt") != "") {
             $certificates = $certificates->where("issuedAt", $request->get("issuedAt"));
+        }
+
+        if ($request->has("issued_month") && $request->get("issued_month") != "") {
+            $parts = explode('-', $request->get("issued_month"));
+            if (count($parts) === 2) {
+                $certificates = $certificates->whereYear("issuedAt", $parts[0])
+                    ->whereMonth("issuedAt", $parts[1]);
+            }
         }
 
 
