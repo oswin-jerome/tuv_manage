@@ -566,47 +566,48 @@ class CertificateController extends Controller
 
   const pages = pdfDoc.getPages();
   for (const page of pages) {
-    const { width, height } = page.getSize();
+    const cropBox = page.getCropBox();
+    const { x, y, width, height } = cropBox;
     const headerH = height * 0.10;
     const footerH = height * 0.08;
     const margin  = width * 0.03;
 
     // White header band
-    page.drawRectangle({ x: 0, y: height - headerH, width, height: headerH, color: white });
+    page.drawRectangle({ x: x, y: y + height - headerH, width: width, height: headerH, color: white });
 
     // Logo top-left
     if (logoImg) {
       const lh = headerH * 0.70;
       const lw = logoImg.width * lh / logoImg.height;
-      page.drawImage(logoImg, { x: margin, y: height - headerH + (headerH - lh) / 2, width: lw, height: lh });
+      page.drawImage(logoImg, { x: x + margin, y: y + height - headerH + (headerH - lh) / 2, width: lw, height: lh });
     }
 
     // QR top-right
     if (qrImg) {
       const qs = headerH * 0.85;
-      page.drawImage(qrImg, { x: width - qs - margin, y: height - headerH + (headerH - qs) / 2, width: qs, height: qs });
+      page.drawImage(qrImg, { x: x + width - qs - margin, y: y + height - headerH + (headerH - qs) / 2, width: qs, height: qs });
     }
 
     // Red line below header
-    page.drawLine({ start: { x: 0, y: height - headerH }, end: { x: width, y: height - headerH }, thickness: 3, color: red });
+    page.drawLine({ start: { x: x, y: y + height - headerH }, end: { x: x + width, y: y + height - headerH }, thickness: 3, color: red });
 
     // White footer band
-    page.drawRectangle({ x: 0, y: 0, width, height: footerH, color: white });
+    page.drawRectangle({ x: x, y: y, width: width, height: footerH, color: white });
 
     // Red line above footer
-    page.drawLine({ start: { x: 0, y: footerH }, end: { x: width, y: footerH }, thickness: 3, color: red });
+    page.drawLine({ start: { x: x, y: y + footerH }, end: { x: x + width, y: y + footerH }, thickness: 3, color: red });
 
     // Footer logo right
     if (logoImg) {
       const lh2 = footerH * 0.65;
       const lw2 = logoImg.width * lh2 / logoImg.height;
-      page.drawImage(logoImg, { x: width - lw2 - margin, y: (footerH - lh2) / 2, width: lw2, height: lh2 });
+      page.drawImage(logoImg, { x: x + width - lw2 - margin, y: y + (footerH - lh2) / 2, width: lw2, height: lh2 });
     }
 
     // Footer text
     const fs = Math.max(8, footerH * 0.22);
-    page.drawText('TUV Experts', { x: margin, y: footerH * 0.6, size: fs + 1, font, color: darkBlue });
-    page.drawText('CR #: 1009060888  |  operations@tuv-experts.com  |  www.tuv-experts.com', { x: margin, y: footerH * 0.25, size: fs - 1, font: fontReg, color: gray });
+    page.drawText('TUV Experts', { x: x + margin, y: y + footerH * 0.6, size: fs + 1, font, color: darkBlue });
+    page.drawText('CR #: 1009060888  |  operations@tuv-experts.com  |  www.tuv-experts.com', { x: x + margin, y: y + footerH * 0.25, size: fs - 1, font: fontReg, color: gray });
   }
 
   const modifiedBytes = await pdfDoc.save();
