@@ -566,48 +566,114 @@ class CertificateController extends Controller
 
   const pages = pdfDoc.getPages();
   for (const page of pages) {
+    const rotation = page.getRotation().angle;
     const cropBox = page.getCropBox();
-    const { x, y, width, height } = cropBox;
-    const headerH = height * 0.10;
-    const footerH = height * 0.08;
-    const margin  = width * 0.03;
+    const { x: cx, y: cy, width: cw, height: ch } = cropBox;
+
+    const w_vis = (rotation === 90 || rotation === 270) ? ch : cw;
+    const h_vis = (rotation === 90 || rotation === 270) ? cw : ch;
+
+    const headerH = h_vis * 0.10;
+    const footerH = h_vis * 0.08;
+    const margin  = w_vis * 0.03;
+
+    const getCoords = (visX, visY) => {
+      if (rotation === 90) {
+        return { x: cx + cw - visY, y: cy + visX };
+      } else if (rotation === 180) {
+        return { x: cx + cw - visX, y: cy + ch - visY };
+      } else if (rotation === 270) {
+        return { x: cx + visY, y: cy + ch - visX };
+      } else {
+        return { x: cx + visX, y: cy + visY };
+      }
+    };
 
     // White header band
-    page.drawRectangle({ x: x, y: y + height - headerH, width: width, height: headerH, color: white });
+    page.drawRectangle({
+      ...getCoords(0, h_vis - headerH),
+      width: w_vis,
+      height: headerH,
+      color: white,
+      rotate: degrees(rotation)
+    });
 
     // Logo top-left
     if (logoImg) {
       const lh = headerH * 0.70;
       const lw = logoImg.width * lh / logoImg.height;
-      page.drawImage(logoImg, { x: x + margin, y: y + height - headerH + (headerH - lh) / 2, width: lw, height: lh });
+      page.drawImage(logoImg, {
+        ...getCoords(margin, h_vis - headerH + (headerH - lh) / 2),
+        width: lw,
+        height: lh,
+        rotate: degrees(rotation)
+      });
     }
 
     // QR top-right
     if (qrImg) {
       const qs = headerH * 0.85;
-      page.drawImage(qrImg, { x: x + width - qs - margin, y: y + height - headerH + (headerH - qs) / 2, width: qs, height: qs });
+      page.drawImage(qrImg, {
+        ...getCoords(w_vis - qs - margin, h_vis - headerH + (headerH - qs) / 2),
+        width: qs,
+        height: qs,
+        rotate: degrees(rotation)
+      });
     }
 
     // Red line below header
-    page.drawLine({ start: { x: x, y: y + height - headerH }, end: { x: x + width, y: y + height - headerH }, thickness: 3, color: red });
+    page.drawLine({
+      start: getCoords(0, h_vis - headerH),
+      end: getCoords(w_vis, h_vis - headerH),
+      thickness: 3,
+      color: red
+    });
 
     // White footer band
-    page.drawRectangle({ x: x, y: y, width: width, height: footerH, color: white });
+    page.drawRectangle({
+      ...getCoords(0, 0),
+      width: w_vis,
+      height: footerH,
+      color: white,
+      rotate: degrees(rotation)
+    });
 
     // Red line above footer
-    page.drawLine({ start: { x: x, y: y + footerH }, end: { x: x + width, y: y + footerH }, thickness: 3, color: red });
+    page.drawLine({
+      start: getCoords(0, footerH),
+      end: getCoords(w_vis, footerH),
+      thickness: 3,
+      color: red
+    });
 
     // Footer logo right
     if (logoImg) {
       const lh2 = footerH * 0.65;
       const lw2 = logoImg.width * lh2 / logoImg.height;
-      page.drawImage(logoImg, { x: x + width - lw2 - margin, y: y + (footerH - lh2) / 2, width: lw2, height: lh2 });
+      page.drawImage(logoImg, {
+        ...getCoords(w_vis - lw2 - margin, (footerH - lh2) / 2),
+        width: lw2,
+        height: lh2,
+        rotate: degrees(rotation)
+      });
     }
 
     // Footer text
     const fs = Math.max(8, footerH * 0.22);
-    page.drawText('TUV Experts', { x: x + margin, y: y + footerH * 0.6, size: fs + 1, font, color: darkBlue });
-    page.drawText('CR #: 1009060888  |  operations@tuv-experts.com  |  www.tuv-experts.com', { x: x + margin, y: y + footerH * 0.25, size: fs - 1, font: fontReg, color: gray });
+    page.drawText('TUV Experts', {
+      ...getCoords(margin, footerH * 0.6),
+      size: fs + 1,
+      font,
+      color: darkBlue,
+      rotate: degrees(rotation)
+    });
+    page.drawText('CR #: 1009060888  |  operations@tuv-experts.com  |  www.tuv-experts.com', {
+      ...getCoords(margin, footerH * 0.25),
+      size: fs - 1,
+      font: fontReg,
+      color: gray,
+      rotate: degrees(rotation)
+    });
   }
 
   const modifiedBytes = await pdfDoc.save();
