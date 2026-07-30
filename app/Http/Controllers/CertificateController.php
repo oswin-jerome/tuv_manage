@@ -566,8 +566,13 @@ class CertificateController extends Controller
 
   const pages = pdfDoc.getPages();
   for (const page of pages) {
-    const rotation = page.getRotation().angle;
-    const cropBox = page.getCropBox();
+    const rotation = (page.getRotation() && page.getRotation().angle) || 0;
+    const cropBox = page.getCropBox() || page.getMediaBox() || {
+      x: 0,
+      y: 0,
+      width: page.getWidth(),
+      height: page.getHeight()
+    };
     const { x: cx, y: cy, width: cw, height: ch } = cropBox;
 
     const w_vis = (rotation === 90 || rotation === 270) ? ch : cw;
