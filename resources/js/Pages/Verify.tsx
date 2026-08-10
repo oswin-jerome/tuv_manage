@@ -11,6 +11,8 @@ export default function Verify({
     certificate: Certificate | null;
     error: string | null;
 }) {
+    const isExpired = certificate?.expireAt ? moment().isAfter(moment(certificate.expireAt), 'day') : false;
+
     return (
         <>
             <Head title="Certificate Verification" />
@@ -29,14 +31,26 @@ export default function Verify({
                         </Card>
                     )}
 
+                    {certificate && isExpired && (
+                        <div className="mb-4 bg-red-50 border border-red-200 text-red-800 px-4 py-3 rounded-lg text-sm text-center font-medium">
+                            Warning: This certificate has expired on {moment(certificate.expireAt).format("D MMM YYYY")}.
+                        </div>
+                    )}
+
                     {certificate && (
-                        <Card>
+                        <Card className={isExpired ? "border-red-200" : ""}>
                             <CardHeader className="pb-3">
                                 <div className="flex items-center justify-between">
                                     <CardTitle className="text-lg">Certificate Details</CardTitle>
-                                    <Badge className="bg-green-100 text-green-700 border-0">
-                                        Verified ✓
-                                    </Badge>
+                                    {isExpired ? (
+                                        <Badge className="bg-red-100 text-red-700 border-0 hover:bg-red-100">
+                                            Expired ✗
+                                        </Badge>
+                                    ) : (
+                                        <Badge className="bg-green-100 text-green-700 border-0 hover:bg-green-100">
+                                            Verified ✓
+                                        </Badge>
+                                    )}
                                 </div>
                             </CardHeader>
                             <CardContent>

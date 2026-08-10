@@ -461,7 +461,20 @@ class CertificateController extends Controller
 
         $qr = "";
         if ($certificate->ref_no != null) {
-            $qr  = base64_encode(QrCode::format('svg')->size(200)->errorCorrection('H')->generate(route("verify") . "?ref_no=" . $certificate->ref_no));
+            $verifyUrl = route("verify") . "?ref_no=" . $certificate->ref_no;
+            try {
+                $qr = base64_encode(QrCode::format('png')->size(200)->errorCorrection('H')->generate($verifyUrl));
+            } catch (\Throwable $e) {
+                try {
+                    $qrUrl = 'https://api.qrserver.com/v1/create-qr-code/?size=200x200&data=' . urlencode($verifyUrl);
+                    $qrData = file_get_contents($qrUrl);
+                    if ($qrData) {
+                        $qr = base64_encode($qrData);
+                    }
+                } catch (\Throwable $e2) {
+                    \Log::error('QR local PNG generation failed, and fallback API failed: ' . $e2->getMessage());
+                }
+            }
         }
 
         $imgMedia = $certificate->getFirstMedia('image');
@@ -512,13 +525,25 @@ class CertificateController extends Controller
 
         // QR as PNG (needs GD or Imagick)
         $qrBase64 = '';
+        $verifyUrl = '';
         if ($certificate->ref_no) {
+            $verifyUrl = route('verify') . '?ref_no=' . $certificate->ref_no;
             try {
                 $qrPng = \SimpleSoftwareIO\QrCode\Facades\QrCode::format('png')
                     ->size(120)->errorCorrection('H')
-                    ->generate(route('verify') . '?ref_no=' . $certificate->ref_no);
+                    ->generate($verifyUrl);
                 $qrBase64 = base64_encode($qrPng);
-            } catch (\Throwable $e) {}
+            } catch (\Throwable $e) {
+                try {
+                    $qrUrl = 'https://api.qrserver.com/v1/create-qr-code/?size=120x120&data=' . urlencode($verifyUrl);
+                    $qrData = file_get_contents($qrUrl);
+                    if ($qrData) {
+                        $qrBase64 = base64_encode($qrData);
+                    }
+                } catch (\Throwable $e2) {
+                    \Log::error('QR local PNG generation in wrapPdf failed, and fallback API failed: ' . $e2->getMessage());
+                }
+            }
         }
 
         $logoBase64 = '';
@@ -551,11 +576,28 @@ class CertificateController extends Controller
   const pdfDoc = await PDFDocument.load(pdfBytes, { ignoreEncryption: true });
 
   const logoBytes = '{$logoBase64}' ? Uint8Array.from(atob('{$logoBase64}'), c => c.charCodeAt(0)) : null;
-  const qrBytes  = '{$qrBase64}'   ? Uint8Array.from(atob('{$qrBase64}'),   c => c.charCodeAt(0)) : null;
+  let qrBytes  = '{$qrBase64}'   ? Uint8Array.from(atob('{$qrBase64}'),   c => c.charCodeAt(0)) : null;
 
   let logoImg = null, qrImg = null;
   if (logoBytes) logoImg = await pdfDoc.embedPng(logoBytes).catch(() => null);
-  if (qrBytes)   qrImg  = await pdfDoc.embedPng(qrBytes).catch(() => null);
+
+  if (!qrBytes && '{$verifyUrl}') {
+    try {
+      const qrApiUrl = `https://api.qrserver.com/v1/create-qr-code/?size=150x150&data=\${encodeURIComponent('{$verifyUrl}')}`;
+      const res = await fetch(qrApiUrl);
+      if (res.ok) {
+        const buffer = await res.arrayBuffer();
+        qrBytes = new Uint8Array(buffer);
+      }
+    } catch (e) {
+      console.error("Failed to fetch QR code from API in browser:", e);
+    }
+  }
+
+  if (qrBytes) qrImg = await pdfDoc.embedPng(qrBytes).catch((err) => {
+    console.error("Failed to embed QR code PNG:", err);
+    return null;
+  });
 
   const font     = await pdfDoc.embedFont(StandardFonts.HelveticaBold);
   const fontReg  = await pdfDoc.embedFont(StandardFonts.Helvetica);
@@ -566,7 +608,40 @@ class CertificateController extends Controller
 
   const pages = pdfDoc.getPages();
   for (const page of pages) {
-    const rotation = (page.getRotation() && page.getRotation().angle) || 0;
+    let rotation = 0;
+    try {
+      const rotObj = page.getRotation();
+      if (rotObj && typeof rotObj.angle === 'number') {
+        rotation = rotObj.angle;
+      }
+    } catch (e) {}
+
+    try {
+      if (rotation === 0 && page.node) {
+        let node = page.node;
+        while (node) {
+          const Rotate = node.get(PDFLib.PDFName.of('Rotate'));
+          if (Rotate) {
+            let val = 0;
+            if (typeof Rotate.asNumber === 'function') {
+              val = Rotate.asNumber();
+            } else if (typeof Rotate.value === 'number') {
+              val = Rotate.value;
+            } else if (typeof Rotate === 'number') {
+              val = Rotate;
+            }
+            if (val) {
+              rotation = val;
+              break;
+            }
+          }
+          node = node.get(PDFLib.PDFName.of('Parent'));
+        }
+      }
+    } catch (e) {}
+
+    rotation = (rotation % 360 + 360) % 360;
+
     const cropBox = page.getCropBox() || page.getMediaBox() || {
       x: 0,
       y: 0,
@@ -574,6 +649,13 @@ class CertificateController extends Controller
       height: page.getHeight()
     };
     const { x: cx, y: cy, width: cw, height: ch } = cropBox;
+
+    console.log("PDF page details:", {
+      pageIndex: pages.indexOf(page),
+      detectedRotation: rotation,
+      unrotatedSize: page.getSize(),
+      cropBox: cropBox
+    });
 
     const w_vis = (rotation === 90 || rotation === 270) ? ch : cw;
     const h_vis = (rotation === 90 || rotation === 270) ? cw : ch;
