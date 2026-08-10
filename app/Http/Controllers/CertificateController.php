@@ -813,7 +813,10 @@ HTML;
         ];
         $fontPath = null;
         foreach ($fontCandidates as $f) {
-            if (file_exists($f)) { $fontPath = $f; break; }
+            if (file_exists($f)) {
+                $fontPath = $f;
+                break;
+            }
         }
 
         // Convert each PDF page to image, add header/footer/QR overlay, combine back to PDF
