@@ -249,7 +249,7 @@
             <thead>
                 <tr>
                     <td style="width: 50%; padding:20px">
-                        <img src="{{ public_path('logo.png') }}" width="120px" class="h-16" alt="">
+                        <img src="{{ public_path('logo.png') }}" style="height: 55px; width: auto;" alt="Trust United Validation Experts">
                     </td>
                 </tr>
             </thead>
@@ -265,7 +265,7 @@
                 <tr>
                     <td style="width: 50%">
                         <div class="text-sm">
-                            <h1 style="margin-bottom: 8px;color:#064463"><span>TUV</span> Experts</h1>
+                            <h1 style="margin-bottom: 8px;color:#064463"><span>Trust United Validation</span> Experts</h1>
                             <p style="font-size: 12px">CR #: 1009060888</p>
                             <p style="font-size: 12px">Email: operations@tuv-experts.com | info@tuv-experts.com </p>
                             <p style="font-size: 12px">Web : www.tuv-experts.com</p>

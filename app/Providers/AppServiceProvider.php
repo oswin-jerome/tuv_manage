@@ -13,8 +13,10 @@ class AppServiceProvider extends ServiceProvider
      */
     public function register(): void
     {
-        URL::forceRootUrl(env("APP_URL"));
-        URL::forceScheme(env("APP_SCHEMA", "http"));
+        if (!app()->environment('local') && env("APP_URL") && env("APP_URL") !== "http://localhost") {
+            URL::forceRootUrl(env("APP_URL"));
+            URL::forceScheme(env("APP_SCHEMA", "http"));
+        }
     }
 
     /**
